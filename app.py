@@ -3,18 +3,22 @@ import os
 
 app = Flask(__name__)
 
+# Ruta principal
 @app.route("/")
 def home():
     return "Bienvenido a COFFEE_MNK – Sistema de Ventas para Cafetería"
 
+# Ruta dinámica para productos
 @app.route("/producto/<nombre>")
 def producto(nombre):
-    return f"Producto: {nombre} – disponible para venta."
+    return f"Producto: {nombre.capitalize()} – disponible para venta en COFFEE_MNK."
 
+# Ruta dinámica para pedidos
 @app.route("/pedido/<cliente>")
 def pedido(cliente):
-    return f"Cliente {cliente}: tu pedido está en preparación en COFFEE_MNK."
+    return f"Hola {cliente.capitalize()}, tu pedido está en preparación en COFFEE_MNK."
 
+# Ruta para favicon
 @app.route("/favicon.ico")
 def favicon():
     return send_from_directory(
