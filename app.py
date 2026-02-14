@@ -3,10 +3,19 @@ import os
 
 app = Flask(__name__)
 
-# Ruta principal
+# Ruta principal (muestra propósito + enlaces para evidenciar rutas dinámicas)
 @app.route("/")
 def home():
-    return "Bienvenido a COFFEE_MNK – Sistema de Ventas para Cafetería"
+    return """
+    <h1>Bienvenido a COFFEE_MNK – Sistema de Ventas para Cafetería</h1>
+    <p>Este sistema incluye rutas dinámicas para consultar productos y pedidos.</p>
+
+    <h3>Rutas de prueba (haz clic):</h3>
+    <ul>
+        <li><a href="/producto/Latte">/producto/Latte</a></li>
+        <li><a href="/pedido/Ana">/pedido/Ana</a></li>
+    </ul>
+    """
 
 # Ruta dinámica para productos
 @app.route("/producto/<nombre>")
