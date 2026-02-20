@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Bienvenido a COFFEE_MNK</h2>
+  <p>
+    Esta versión usa plantillas Jinja2 con herencia para reutilizar componentes
+    y mantener el proyecto ordenado.
+  </p>
+
+  <section class="card">
+    <h3>Rutas de prueba</h3>
+    <ul>
+      <li><a href="{{ url_for('about') }}">/about</a></li>
+      <li><a href="{{ url_for('producto', nombre='latte') }}">/producto/latte</a></li>
+      <li><a href="{{ url_for('pedido', cliente='ana') }}">/pedido/ana</a></li>
+    </ul>
+  </section>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Producto</h2>
+  <p>Producto seleccionado: <strong>{{ nombre }}</strong></p>
+
+  <div class="card">
+    <p>Vista generada desde la ruta dinámica <code>/producto/&lt;nombre&gt;</code>.</p>
+  </div>
+{% endblock %}

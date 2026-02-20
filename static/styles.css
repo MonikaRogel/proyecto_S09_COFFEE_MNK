@@ -1,0 +1,29 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: #f6f6f6; color: #222; }
+
+.container { width: min(1000px, 92%); margin: 0 auto; }
+
+.header { background: #1f1f1f; color: #fff; padding: 16px 0; }
+.logo { font-size: 20px; margin-bottom: 8px; }
+
+.nav a {
+  color: #fff; text-decoration: none; margin-right: 14px;
+  padding: 6px 10px; border-radius: 6px;
+}
+.nav a:hover { background: rgba(255,255,255,0.15); }
+
+.main { padding: 20px 0; }
+h2 { margin-bottom: 10px; }
+p { margin-bottom: 12px; line-height: 1.5; }
+
+.card {
+  background: #fff; padding: 14px; border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  margin-top: 14px;
+}
+
+ul { margin-left: 18px; margin-top: 8px; }
+li { margin: 6px 0; }
+
+.footer { margin-top: 30px; padding: 14px 0; background: #fff; border-top: 1px solid #e6e6e6; }
+.footer p { margin: 0; color: #666; }
