@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h2>Acerca de</h2>
-  <p>
-    COFFEE_MNK es un proyecto académico en Flask. En Semana 10 se incorpora el uso
-    de templates, herencia y separación de estructura y contenido.
-  </p>
+  <section class="hero">
+    <h2>{{ titulo }}</h2>
+    <p>
+      COFFEE_MNK es un proyecto académico en Flask. En Semana 10 incorporé templates,
+      herencia y separación de estructura y contenido para mejorar escalabilidad y mantenimiento.
+    </p>
+  </section>
 {% endblock %}

@@ -1,18 +1,40 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h2>Bienvenido a COFFEE_MNK</h2>
-  <p>
-    Esta versión usa plantillas Jinja2 con herencia para reutilizar componentes
-    y mantener el proyecto ordenado.
-  </p>
+  <section class="hero">
+    <h2>Bienvenido a COFFEE_MNK</h2>
+    <p>
+      Esta versión utiliza plantillas Jinja2 con herencia para reutilizar componentes,
+      mantener el proyecto organizado y preparar la aplicación para futuras funcionalidades.
+    </p>
 
-  <section class="card">
-    <h3>Rutas de prueba</h3>
-    <ul>
-      <li><a href="{{ url_for('about') }}">/about</a></li>
-      <li><a href="{{ url_for('producto', nombre='latte') }}">/producto/latte</a></li>
-      <li><a href="{{ url_for('pedido', cliente='ana') }}">/pedido/ana</a></li>
-    </ul>
+    <div class="meta">
+      <span class="badge">Flask</span>
+      <span class="badge">Jinja2</span>
+      <span class="badge">Herencia de plantillas</span>
+      <span class="badge">Static/CSS</span>
+      <span class="badge">Deploy en Render</span>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="card half">
+      <h3>Rutas de prueba</h3>
+      <ul class="list">
+        <li><a class="link" href="{{ url_for('about') }}">/about</a></li>
+        <li><a class="link" href="{{ url_for('producto', nombre='latte') }}">/producto/latte</a></li>
+        <li><a class="link" href="{{ url_for('pedido', cliente='ana') }}">/pedido/ana</a></li>
+      </ul>
+    </div>
+
+    <div class="card half">
+      <h3>Qué se implementó en Semana 10</h3>
+      <ul class="list">
+        <li>Carpeta templates y renderizado con render_template()</li>
+        <li>Plantilla base con bloques para herencia</li>
+        <li>Reutilización de encabezado, menú y pie de página</li>
+        <li>Separación de estructura (HTML) y lógica (Python)</li>
+      </ul>
+    </div>
   </section>
 {% endblock %}
