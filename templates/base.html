@@ -1,38 +1,50 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{{ titulo }} | COFFEE_MNK</title>
 
   <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='4') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='7') }}">
 </head>
 <body>
 
-<header class="header">
-  <div class="container header-row">
-    <h1 class="logo">
-        COFFEE_MNK
-        <span class="tagline">Cafetería & Sistema de pedidos</span>
-    </h1>
+  <header class="topbar">
+    <div class="container topbar-row">
+      <a class="brand" href="{{ url_for('home') }}">
+        <span class="brand-name">COFFEE_MNK</span>
+        <span class="brand-tag">Cafetería · Ventas · Pedidos</span>
+      </a>
 
-    <nav class="nav">
-      <a href="{{ url_for('home') }}">Inicio</a>
-      <a href="{{ url_for('about') }}">Acerca de</a>
-      <a href="{{ url_for('producto', nombre='latte') }}">Producto</a>
-      <a href="{{ url_for('pedido', cliente='ana') }}">Pedido</a>
-    </nav>
-  </div>
-</header>
+      <nav class="nav">
+        <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
+        <a href="{{ url_for('menu') }}" class="nav-link">Menú</a>
+        <a href="{{ url_for('inventario') }}" class="nav-link">Inventario</a>
+        <a href="{{ url_for('pedido_nuevo') }}" class="nav-link nav-cta">Nuevo pedido</a>
+        <a href="{{ url_for('about') }}" class="nav-link">Acerca de</a>
+      </nav>
+    </div>
+  </header>
 
   <main class="container main">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="alerts">
+          {% for category, message in messages %}
+            <div class="alert {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
     {% block content %}{% endblock %}
   </main>
 
   <footer class="footer">
-    <div class="container">
-      <p>COFFEE_MNK - Proyecto Flask</p>
+    <div class="container footer-row">
+      <p>COFFEE_MNK · Sistema de gestión de cafetería</p>
+      <p class="muted">Proyecto académico · Flask + Jinja2</p>
     </div>
   </footer>
 

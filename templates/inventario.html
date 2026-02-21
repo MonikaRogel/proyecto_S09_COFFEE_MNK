@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="page-head">
+    <h1>Inventario</h1>
+    <p class="muted">Control simulado de existencias por producto.</p>
+
+    <div class="kpis">
+      <div class="kpi">
+        <span class="kpi-label">Productos</span>
+        <span class="kpi-value">{{ total_skus }}</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-label">Stock total</span>
+        <span class="kpi-value">{{ total_stock }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th>Estado</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for slug, p in menu.items() %}
+          <tr>
+            <td>{{ p.nombre }}</td>
+            <td>${{ "%.2f"|format(p.precio) }}</td>
+            <td>{{ p.stock }}</td>
+            <td>
+              {% if p.stock > 0 %}
+                <span class="badge ok">Disponible</span>
+              {% else %}
+                <span class="badge warn">Agotado</span>
+              {% endif %}
+            </td>
+            <td>
+              <a class="link" href="{{ url_for('producto', slug=slug) }}">Ver</a>
+              {% if p.stock > 0 %}
+                <span class="muted">·</span>
+                <a class="link" href="{{ url_for('pedido_nuevo', producto=slug) }}">Pedir</a>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

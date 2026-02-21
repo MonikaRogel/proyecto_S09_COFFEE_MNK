@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="page-head">
+    <h1>Pedido #{{ pedido.id }}</h1>
+    <p class="muted">Cliente: {{ pedido.cliente }} · Estado: {{ pedido.estado }} · {{ pedido.fecha }}</p>
+  </div>
+
+  <div class="card plain">
+    <h3>Detalle</h3>
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in pedido.items %}
+            <tr>
+              <td>{{ item.nombre }}</td>
+              <td>${{ "%.2f"|format(item.precio) }}</td>
+              <td>{{ item.cantidad }}</td>
+              <td>${{ "%.2f"|format(item.subtotal) }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="total-row">
+      <span>Total</span>
+      <span class="price big">${{ "%.2f"|format(pedido.total) }}</span>
+    </div>
+
+    {% if pedido.notas %}
+      <div class="notes">
+        <h4>Notas</h4>
+        <p class="muted">{{ pedido.notas }}</p>
+      </div>
+    {% endif %}
+
+    <div class="card-actions">
+      <a class="btn" href="{{ url_for('menu') }}">Seguir comprando</a>
+      <a class="btn primary" href="{{ url_for('pedido_nuevo') }}">Nuevo pedido</a>
+    </div>
+  </div>
+{% endblock %}

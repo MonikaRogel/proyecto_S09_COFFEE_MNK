@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="page-head">
+    <h1>Nuevo pedido</h1>
+    <p class="muted">Registra un pedido para un cliente y descuenta stock automáticamente.</p>
+  </div>
+
+  <form class="form" method="post" action="{{ url_for('pedido_nuevo', producto=pre_producto) }}">
+    <div class="form-grid">
+      <label class="field">
+        <span class="label">Cliente</span>
+        <input name="cliente" type="text" placeholder="Ej: Monika" required>
+      </label>
+
+      <label class="field">
+        <span class="label">Producto</span>
+        <select name="producto" required>
+          <option value="" disabled {% if not pre_producto %}selected{% endif %}>Selecciona un producto</option>
+
+          {% for slug, p in menu.items() %}
+            {% if p.stock > 0 %}
+              <option value="{{ slug }}" {% if pre_producto == slug %}selected{% endif %}>
+                {{ p.nombre }} - ${{ "%.2f"|format(p.precio) }} (Stock: {{ p.stock }})
+              </option>
+            {% else %}
+              <option value="{{ slug }}" disabled>
+                {{ p.nombre }} - Agotado
+              </option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </label>
+
+      <label class="field">
+        <span class="label">Cantidad</span>
+        <input name="cantidad" type="number" min="1" value="1" required>
+      </label>
+
+      <label class="field field-full">
+        <span class="label">Notas (opcional)</span>
+        <textarea name="notas" rows="3" placeholder="Ej: sin azúcar, extra espuma..."></textarea>
+      </label>
+    </div>
+
+    <div class="form-actions">
+      <a class="btn" href="{{ url_for('home') }}">Cancelar</a>
+      <button class="btn primary" type="submit">Registrar pedido</button>
+    </div>
+  </form>
+{% endblock %}

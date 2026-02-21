@@ -2,40 +2,60 @@
 
 {% block content %}
   <section class="hero">
-    <h2>COFFEE_MNK - Sistema de ventas para cafetería</h2>
-    <p>
-      Este sistema permite consultar productos del menú y generar pedidos mediante rutas dinámicas.
-      En esta versión implementé plantillas Jinja2 con herencia para reutilizar componentes y mantener el proyecto organizado.
-    </p>
+    <div class="hero-content">
+      <h1>Sistema de ventas para cafetería</h1>
+      <p>
+        Consulta productos del menú, registra pedidos y controla inventario de forma rápida.
+      </p>
 
-    <div class="meta">
-      <span class="badge">Menú</span>
-      <span class="badge">Pedidos</span>
-      <span class="badge">Jinja2</span>
-      <span class="badge">Herencia</span>
-      <span class="badge">Render</span>
+      <div class="hero-actions">
+        <a class="btn primary" href="{{ url_for('menu') }}">Ver menú</a>
+        <a class="btn" href="{{ url_for('pedido_nuevo') }}">Registrar pedido</a>
+      </div>
+
+      <div class="hero-badges">
+        <span class="pill">Productos</span>
+        <span class="pill">Pedidos</span>
+        <span class="pill">Inventario</span>
+      </div>
     </div>
   </section>
 
-  <section class="grid">
-    <div class="card half">
-      <h3>Pruebas rápidas</h3>
-      <ul class="list">
-        <li><a class="link" href="{{ url_for('about') }}">Acerca de</a></li>
-        <li><a class="link" href="{{ url_for('producto', nombre='capuccino') }}">Producto: capuccino</a></li>
-        <li><a class="link" href="{{ url_for('producto', nombre='mocaccino') }}">Producto: mocaccino</a></li>
-        <li><a class="link" href="{{ url_for('pedido', cliente='monika') }}">Pedido: monika</a></li>
-      </ul>
+  <section class="section">
+    <div class="section-head">
+      <h2>Destacados</h2>
+      <a class="link" href="{{ url_for('menu') }}">Ver todo el menú</a>
     </div>
 
-    <div class="card half">
-        <h3>Gestión del sistema</h3>
-        <ul class="list">
-            <li>Consulta dinámica de productos del menú</li>
-            <li>Generación de pedidos por cliente</li>
-            <li>Interfaz estructurada mediante plantillas reutilizables</li>
-            <li>Arquitectura preparada para integrar base de datos</li>
-        </ul>
+    <div class="cards">
+      {% for slug in destacados %}
+        {% set p = menu[slug] %}
+        <article class="card">
+          <div class="card-media" style="background-image:url('{{ p.img }}');"></div>
+
+          <div class="card-body">
+            <div class="card-title-row">
+              <h3>{{ p.nombre }}</h3>
+              <span class="price">${{ "%.2f"|format(p.precio) }}</span>
+            </div>
+
+            <p class="muted">{{ p.desc }}</p>
+
+            <div class="card-meta">
+              {% if p.stock > 0 %}
+                <span class="badge ok">Stock: {{ p.stock }}</span>
+              {% else %}
+                <span class="badge warn">Agotado</span>
+              {% endif %}
+            </div>
+
+            <div class="card-actions">
+              <a class="btn small" href="{{ url_for('producto', slug=slug) }}">Ver detalle</a>
+              <a class="btn small primary" href="{{ url_for('pedido_nuevo', producto=slug) }}">Pedir</a>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
     </div>
   </section>
 {% endblock %}

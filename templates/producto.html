@@ -1,22 +1,31 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <section class="hero">
-    <h2>Producto del menú</h2>
-    <p>Producto seleccionado: <strong>{{ nombre }}</strong></p>
+  <div class="product">
+    <div class="product-media" style="background-image:url('{{ producto.img }}');"></div>
 
-    <div class="meta">
-      <span class="badge">Disponible</span>
-      <span class="badge">Bebida caliente</span>
-      <span class="badge">Preparación rápida</span>
+    <div class="product-info">
+      <h1>{{ producto.nombre }}</h1>
+      <p class="muted">{{ producto.desc }}</p>
+
+      <div class="product-row">
+        <span class="price big">${{ "%.2f"|format(producto.precio) }}</span>
+
+        {% if producto.stock > 0 %}
+          <span class="badge ok">Stock: {{ producto.stock }}</span>
+        {% else %}
+          <span class="badge warn">Agotado</span>
+        {% endif %}
+      </div>
+
+      <div class="product-actions">
+        <a class="btn" href="{{ url_for('menu') }}">Volver al menú</a>
+        {% if producto.stock > 0 %}
+          <a class="btn primary" href="{{ url_for('pedido_nuevo', producto=slug) }}">Pedir ahora</a>
+        {% else %}
+          <span class="btn disabled">No disponible</span>
+        {% endif %}
+      </div>
     </div>
-  </section>
-
-  <div class="card">
-    <h3>Detalle técnico</h3>
-    <ul class="list">
-      <li>Ruta dinámica: <code>/producto/&lt;nombre&gt;</code></li>
-      <li>Vista renderizada con Jinja2 y herencia desde <code>base.html</code></li>
-    </ul>
   </div>
 {% endblock %}

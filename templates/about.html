@@ -1,19 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <section class="hero">
-    <h2>Acerca de</h2>
-    <p>
-      COFFEE_MNK es mi proyecto académico en Flask orientado a un sistema de ventas para cafetería.
-      En Semana 10 incorporé plantillas con Jinja2, herencia y separación de estructura y lógica
-      para mantener el proyecto más ordenado, reutilizable y listo para futuras extensiones.
+  <div class="page-head">
+    <h1>Acerca de COFFEE_MNK</h1>
+    <p class="muted">
+      COFFEE_MNK es un concepto de cafetería orientado a ventas y atención rápida.
+      Este sistema permite gestionar productos, pedidos e inventario de forma clara.
     </p>
+  </div>
 
-    <div class="meta">
-      <span class="badge">Plantillas</span>
-      <span class="badge">Reutilización</span>
-      <span class="badge">Rutas dinámicas</span>
-      <span class="badge">Static/CSS</span>
+  <div class="cards">
+    <div class="card plain">
+      <h3>Misión</h3>
+      <p class="muted">
+        Ofrecer bebidas de calidad y una experiencia ágil mediante un sistema digital organizado.
+      </p>
     </div>
-  </section>
+
+    <div class="card plain">
+      <h3>Servicios</h3>
+      <ul class="list">
+        <li>Menú de bebidas calientes</li>
+        <li>Registro de pedidos por cliente</li>
+        <li>Control simulado de inventario</li>
+      </ul>
+    </div>
+  </div>
 {% endblock %}
