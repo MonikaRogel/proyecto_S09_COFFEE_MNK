@@ -1,10 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h2>Pedido</h2>
-  <p>Cliente: <strong>{{ cliente }}</strong></p>
+  <section class="hero">
+    <h2>Pedido</h2>
+    <p>Cliente: <strong>{{ cliente }}</strong></p>
+
+    <div class="meta">
+      <span class="badge">Estado: En preparación</span>
+      <span class="badge">Entrega: Mostrador</span>
+    </div>
+  </section>
 
   <div class="card">
-    <p>Vista generada desde la ruta dinámica <code>/pedido/&lt;cliente&gt;</code>.</p>
+    <h3>Detalle técnico</h3>
+    <ul class="list">
+      <li>Ruta dinámica: <code>/pedido/&lt;cliente&gt;</code></li>
+      <li>Plantillas reutilizadas mediante herencia (base.html)</li>
+    </ul>
   </div>
 {% endblock %}

@@ -1,3 +1,15 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ titulo }} | COFFEE_MNK</title>
+
+  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='4') }}">
+</head>
+<body>
+
 <header class="header">
   <div class="container header-row">
     <h1 class="logo">COFFEE_MNK</h1>
@@ -10,3 +22,16 @@
     </nav>
   </div>
 </header>
+
+  <main class="container main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>COFFEE_MNK - Proyecto Flask</p>
+    </div>
+  </footer>
+
+</body>
+</html>

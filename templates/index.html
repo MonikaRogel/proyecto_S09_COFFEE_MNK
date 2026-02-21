@@ -2,33 +2,34 @@
 
 {% block content %}
   <section class="hero">
-    <h2>Bienvenido a COFFEE_MNK</h2>
+    <h2>COFFEE_MNK - Sistema de ventas para cafetería</h2>
     <p>
-      Esta versión utiliza plantillas Jinja2 con herencia para reutilizar componentes,
-      mantener el proyecto organizado y preparar la aplicación para futuras funcionalidades.
+      Este sistema permite consultar productos del menú y generar pedidos mediante rutas dinámicas.
+      En esta versión implementé plantillas Jinja2 con herencia para reutilizar componentes y mantener el proyecto organizado.
     </p>
 
     <div class="meta">
-      <span class="badge">Flask</span>
+      <span class="badge">Menú</span>
+      <span class="badge">Pedidos</span>
       <span class="badge">Jinja2</span>
-      <span class="badge">Herencia de plantillas</span>
-      <span class="badge">Static/CSS</span>
-      <span class="badge">Deploy en Render</span>
+      <span class="badge">Herencia</span>
+      <span class="badge">Render</span>
     </div>
   </section>
 
   <section class="grid">
     <div class="card half">
-      <h3>Rutas de prueba</h3>
+      <h3>Pruebas rápidas</h3>
       <ul class="list">
-        <li><a class="link" href="{{ url_for('about') }}">/about</a></li>
-        <li><a class="link" href="{{ url_for('producto', nombre='latte') }}">/producto/latte</a></li>
-        <li><a class="link" href="{{ url_for('pedido', cliente='ana') }}">/pedido/ana</a></li>
+        <li><a class="link" href="{{ url_for('about') }}">Acerca de</a></li>
+        <li><a class="link" href="{{ url_for('producto', nombre='capuccino') }}">Producto: capuccino</a></li>
+        <li><a class="link" href="{{ url_for('producto', nombre='mocaccino') }}">Producto: mocaccino</a></li>
+        <li><a class="link" href="{{ url_for('pedido', cliente='monika') }}">Pedido: monika</a></li>
       </ul>
     </div>
 
     <div class="card half">
-      <h3>Qué se implementó en Semana 10</h3>
+      <h3>Resumen de implementación (Semana 10)</h3>
       <ul class="list">
         <li>Carpeta templates y renderizado con render_template()</li>
         <li>Plantilla base con bloques para herencia</li>

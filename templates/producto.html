@@ -1,10 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h2>Producto</h2>
-  <p>Producto seleccionado: <strong>{{ nombre }}</strong></p>
+  <section class="hero">
+    <h2>Producto del menú</h2>
+    <p>Producto seleccionado: <strong>{{ nombre }}</strong></p>
+
+    <div class="meta">
+      <span class="badge">Disponible</span>
+      <span class="badge">Bebida caliente</span>
+      <span class="badge">Preparación rápida</span>
+    </div>
+  </section>
 
   <div class="card">
-    <p>Vista generada desde la ruta dinámica <code>/producto/&lt;nombre&gt;</code>.</p>
+    <h3>Detalle técnico</h3>
+    <ul class="list">
+      <li>Ruta dinámica: <code>/producto/&lt;nombre&gt;</code></li>
+      <li>Vista renderizada con Jinja2 y herencia desde <code>base.html</code></li>
+    </ul>
   </div>
 {% endblock %}
