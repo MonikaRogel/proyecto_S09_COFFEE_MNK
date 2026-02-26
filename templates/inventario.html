@@ -42,10 +42,10 @@
               {% endif %}
             </td>
             <td>
-              <a class="link" href="{{ url_for('producto', slug=slug) }}">Ver</a>
+              <a class="link" href="{{ url_for('productos.detalle', slug=slug) }}">Ver</a>
               {% if p.stock > 0 %}
                 <span class="muted">·</span>
-                <a class="link" href="{{ url_for('pedido_nuevo', producto=slug) }}">Pedir</a>
+                <a class="link" href="{{ url_for('pedidos.nuevo', producto=slug) }}">Pedir</a>
               {% endif %}
             </td>
           </tr>
