@@ -9,8 +9,17 @@
       </p>
 
       <div class="hero-actions">
-        <a class="btn primary" href="{{ url_for('menu') }}">Ver menú</a>
-        <a class="btn" href="{{ url_for('pedido_nuevo') }}">Registrar pedido</a>
+        {% if 'productos' in blueprints %}
+          <a class="btn primary" href="{{ url_for('productos.index') }}">Ver menú</a>
+        {% else %}
+          <a class="btn primary" href="{{ url_for('main.about') }}">Ver menú</a>
+        {% endif %}
+
+        {% if 'pedidos' in blueprints %}
+          <a class="btn" href="{{ url_for('pedidos.nuevo') }}">Registrar pedido</a>
+        {% else %}
+          <a class="btn" href="{{ url_for('main.about') }}">Registrar pedido</a>
+        {% endif %}
       </div>
 
       <div class="hero-badges">
@@ -24,7 +33,11 @@
   <section class="section">
     <div class="section-head">
       <h2>Destacados</h2>
-      <a class="link" href="{{ url_for('menu') }}">Ver todo el menú</a>
+        {% if 'productos' in blueprints %}
+          <a class="btn primary" href="{{ url_for('productos.index') }}">Ver menú</a>
+        {% else %}
+          <a class="btn primary" href="{{ url_for('main.about') }}">Ver menú</a>
+        {% endif %}
     </div>
 
     <div class="cards">
@@ -50,8 +63,12 @@
             </div>
 
             <div class="card-actions">
-              <a class="btn small" href="{{ url_for('producto', slug=slug) }}">Ver detalle</a>
-              <a class="btn small primary" href="{{ url_for('pedido_nuevo', producto=slug) }}">Pedir</a>
+              <a class="btn small" href="{{ url_for('main.about') }}">Ver detalle</a>
+                {% if 'pedidos' in blueprints %}
+                  <a class="btn" href="{{ url_for('pedidos.nuevo') }}">Registrar pedido</a>
+                {% else %}
+                  <a class="btn" href="{{ url_for('main.about') }}">Registrar pedido</a>
+                {% endif %}
             </div>
           </div>
         </article>
