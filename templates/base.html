@@ -12,18 +12,29 @@
 
   <header class="topbar">
     <div class="container topbar-row">
-      <a class="brand" href="{{ url_for('home') }}">
+      <a class="brand" href="{{ url_for('main.home') }}">
         <span class="brand-name">COFFEE_MNK</span>
         <span class="brand-tag">Cafetería · Ventas · Pedidos</span>
       </a>
 
       <nav class="nav">
-        <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
-        <a href="{{ url_for('menu') }}" class="nav-link">Menú</a>
-        <a href="{{ url_for('inventario') }}" class="nav-link">Inventario</a>
-        <a href="{{ url_for('pedido_nuevo') }}" class="nav-link nav-cta">Nuevo pedido</a>
-        <a href="{{ url_for('about') }}" class="nav-link">Acerca de</a>
-      </nav>
+        <a href="{{ url_for('main.home') }}" class="nav-link">Inicio</a>
+
+        {% if 'productos' in blueprints %}
+          <a href="{{ url_for('productos.index') }}" class="nav-link">Menú</a>
+          <a href="{{ url_for('productos.inventario') }}" class="nav-link">Inventario</a>
+        {% endif %}
+
+        {% if 'pedidos' in blueprints %}
+          <a href="{{ url_for('pedidos.nuevo') }}" class="nav-link nav-cta">Nuevo pedido</a>
+        {% endif %}
+
+        {% if 'clientes' in blueprints %}
+          <a href="{{ url_for('clientes.index') }}" class="nav-link">Clientes</a>
+        {% endif %}
+
+        <a href="{{ url_for('main.about') }}" class="nav-link">Acerca de</a>
+      </nav>     
     </div>
   </header>
 
