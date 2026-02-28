@@ -5,13 +5,10 @@ from .seed import seed_if_empty
 import os
 
 def create_app():
-    # Ruta absoluta a la raíz del proyecto (un nivel arriba de app/)
     basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    
     app = Flask(__name__,
                 template_folder=os.path.join(basedir, 'templates'),
                 static_folder=os.path.join(basedir, 'static'))
-    
     app.config.from_object(Config)
 
     with app.app_context():
