@@ -1,32 +1,66 @@
 {% extends "base.html" %}
-
 {% block content %}
   <div class="page-head">
     <h1>Nuevo pedido</h1>
-    <p class="muted">Registra un pedido para un cliente y descuenta stock automáticamente.</p>
+    <p class="muted">Selecciona un cliente existente o crea uno nuevo al registrar.</p>
   </div>
 
-  <form class="form" method="post" action="{{ url_for('pedido_nuevo', producto=pre_producto) }}">
+  <form class="form" method="post" action="{{ url_for('pedidos.nuevo', producto=pre_producto or '') }}">
     <div class="form-grid">
+
+      <!-- Cliente existente -->
       <label class="field">
         <span class="label">Cliente</span>
-        <input name="cliente" type="text" placeholder="Ej: Monika" required>
+        <select id="cliente_id" name="cliente_id">
+          <option value="" selected>-- Selecciona --</option>
+          {% for c in clientes %}
+            <option value="{{ c.id }}">{{ c.nombre }}{% if c.email %} ({{ c.email }}){% endif %}</option>
+          {% endfor %}
+        </select>
+        <p class="muted">Si vas a crear un cliente nuevo, deja esto en “-- Selecciona --”.</p>
       </label>
 
+      <!-- Cliente nuevo -->
+      <div class="card plain" id="cliente_nuevo_box" style="grid-column:1/-1;">
+        <h3>Cliente nuevo</h3>
+
+        <div class="form-grid">
+          <label class="field">
+            <span class="label">Nombre</span>
+            <input id="cliente_nombre" name="cliente_nombre" type="text" placeholder="Ej: Monika">
+          </label>
+
+          <label class="field">
+            <span class="label">Cédula (opcional)</span>
+            <input id="cliente_cedula" name="cliente_cedula" type="text" placeholder="Ej: 0102030405">
+          </label>
+
+          <label class="field">
+            <span class="label">Email (opcional)</span>
+            <input id="cliente_email" name="cliente_email" type="email" placeholder="correo@ejemplo.com">
+          </label>
+
+          <label class="field">
+            <span class="label">Teléfono (opcional)</span>
+            <input id="cliente_telefono" name="cliente_telefono" type="text" placeholder="099...">
+          </label>
+        </div>
+
+        <p class="muted">Si llenas el nombre aquí, se creará un cliente nuevo.</p>
+      </div>
+
+      <!-- Producto -->
       <label class="field">
         <span class="label">Producto</span>
         <select name="producto" required>
           <option value="" disabled {% if not pre_producto %}selected{% endif %}>Selecciona un producto</option>
-
-          {% for slug, p in menu.items() %}
+          {% for p in productos %}
             {% if p.stock > 0 %}
-              <option value="{{ slug }}" {% if pre_producto == slug %}selected{% endif %}>
+              <option value="{{ p.slug }}" {% if pre_producto == p.slug %}selected{% endif %}>
                 {{ p.nombre }} - ${{ "%.2f"|format(p.precio) }} (Stock: {{ p.stock }})
               </option>
             {% else %}
-              <option value="{{ slug }}" disabled>
-                {{ p.nombre }} - Agotado
-              </option>
+              <option value="{{ p.slug }}" disabled>{{ p.nombre }} - Agotado</option>
             {% endif %}
           {% endfor %}
         </select>
@@ -41,11 +75,50 @@
         <span class="label">Notas (opcional)</span>
         <textarea name="notas" rows="3" placeholder="Ej: sin azúcar, extra espuma..."></textarea>
       </label>
+
     </div>
 
     <div class="form-actions">
-      <a class="btn" href="{{ url_for('home') }}">Cancelar</a>
+      <a class="btn" href="{{ url_for('productos.index') }}">Cancelar</a>
       <button class="btn primary" type="submit">Registrar pedido</button>
     </div>
   </form>
+
+  <script>
+    (function () {
+      const sel = document.getElementById("cliente_id");
+      const box = document.getElementById("cliente_nuevo_box");
+      const nombre = document.getElementById("cliente_nombre");
+      const cedula = document.getElementById("cliente_cedula");
+      const email = document.getElementById("cliente_email");
+      const tel = document.getElementById("cliente_telefono");
+
+      function setClienteNuevoEnabled(enabled) {
+        [nombre, cedula, email, tel].forEach(i => i.disabled = !enabled);
+        box.style.opacity = enabled ? "1" : "0.55";
+      }
+
+      // Si elige cliente existente => deshabilita cliente nuevo
+      sel.addEventListener("change", function () {
+        if (sel.value) {
+          setClienteNuevoEnabled(false);
+          nombre.value = ""; cedula.value = ""; email.value = ""; tel.value = "";
+        } else {
+          setClienteNuevoEnabled(true);
+        }
+      });
+
+      // Si empieza a escribir cliente nuevo => resetea select
+      [nombre, cedula, email, tel].forEach(i => {
+        i.addEventListener("input", function () {
+          const any = (nombre.value || cedula.value || email.value || tel.value).trim().length > 0;
+          if (any) sel.value = "";
+          setClienteNuevoEnabled(true);
+        });
+      });
+
+      // Estado inicial
+      setClienteNuevoEnabled(true);
+    })();
+  </script>
 {% endblock %}

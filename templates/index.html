@@ -9,17 +9,8 @@
       </p>
 
       <div class="hero-actions">
-        {% if 'productos' in blueprints %}
-          <a class="btn primary" href="{{ url_for('productos.index') }}">Ver menú</a>
-        {% else %}
-          <a class="btn primary" href="{{ url_for('main.about') }}">Ver menú</a>
-        {% endif %}
-
-        {% if 'pedidos' in blueprints %}
-          <a class="btn" href="{{ url_for('pedidos.nuevo') }}">Registrar pedido</a>
-        {% else %}
-          <a class="btn" href="{{ url_for('main.about') }}">Registrar pedido</a>
-        {% endif %}
+        <a class="btn primary" href="{{ url_for('productos.index') }}">Ver menú</a>
+        <a class="btn" href="{{ url_for('pedidos.nuevo') }}">Registrar pedido</a>
       </div>
 
       <div class="hero-badges">
@@ -33,11 +24,7 @@
   <section class="section">
     <div class="section-head">
       <h2>Destacados</h2>
-        {% if 'productos' in blueprints %}
-          <a class="btn primary" href="{{ url_for('productos.index') }}">Ver menú</a>
-        {% else %}
-          <a class="btn primary" href="{{ url_for('main.about') }}">Ver menú</a>
-        {% endif %}
+      <a class="btn primary" href="{{ url_for('productos.index') }}">Ver menú</a>
     </div>
 
     <div class="cards">
@@ -63,12 +50,13 @@
             </div>
 
             <div class="card-actions">
-              <a class="btn small" href="{{ url_for('main.about') }}">Ver detalle</a>
-                {% if 'pedidos' in blueprints %}
-                  <a class="btn" href="{{ url_for('pedidos.nuevo') }}">Registrar pedido</a>
-                {% else %}
-                  <a class="btn" href="{{ url_for('main.about') }}">Registrar pedido</a>
-                {% endif %}
+              <a class="btn small" href="{{ url_for('productos.detalle', slug=slug) }}">Ver detalle</a>
+
+              {% if p.stock > 0 %}
+                <a class="btn small primary" href="{{ url_for('pedidos.nuevo', producto=slug) }}">Pedir</a>
+              {% else %}
+                <span class="btn small disabled">No disponible</span>
+              {% endif %}
             </div>
           </div>
         </article>

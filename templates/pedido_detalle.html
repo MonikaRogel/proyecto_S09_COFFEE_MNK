@@ -3,7 +3,18 @@
 {% block content %}
   <div class="page-head">
     <h1>Pedido #{{ pedido.id }}</h1>
-    <p class="muted">Cliente: {{ pedido.cliente }} · Estado: {{ pedido.estado }} · {{ pedido.fecha }}</p>
+    <p class="muted">
+      Cliente: {{ pedido.cliente_nombre }} ·
+      Estado:
+      <span class="badge
+        {% if pedido.estado == 'Entregado' %}badge-success
+        {% elif pedido.estado == 'Cancelado' %}badge-error
+        {% elif pedido.estado == 'Listo' %}badge-warning
+        {% else %}badge-info{% endif %}">
+        {{ pedido.estado }}
+      </span>
+      · {{ pedido.fecha }}
+    </p>
   </div>
 
   <div class="card plain">
@@ -20,12 +31,12 @@
           </tr>
         </thead>
         <tbody>
-          {% for item in pedido.items %}
+          {% for it in items %}
             <tr>
-              <td>{{ item.nombre }}</td>
-              <td>${{ "%.2f"|format(item.precio) }}</td>
-              <td>{{ item.cantidad }}</td>
-              <td>${{ "%.2f"|format(item.subtotal) }}</td>
+              <td>{{ it.producto_nombre }}</td>
+              <td>${{ "%.2f"|format(it.precio_unitario) }}</td>
+              <td>{{ it.cantidad }}</td>
+              <td>${{ "%.2f"|format(it.subtotal) }}</td>
             </tr>
           {% endfor %}
         </tbody>
@@ -44,9 +55,29 @@
       </div>
     {% endif %}
 
-    <div class="card-actions">
-      <a class="btn" href="{{ url_for('menu') }}">Seguir comprando</a>
-      <a class="btn primary" href="{{ url_for('pedido_nuevo') }}">Nuevo pedido</a>
+    <div class="divider"></div>
+
+    <h3>Cambiar estado</h3>
+
+    <form id="form-estado" method="post" action="{{ url_for('pedidos.cambiar_estado', pedido_id=pedido.id) }}" class="inline-form">
+      <select id="select-estado" name="estado" class="select-mini">
+        {% for e in estados %}
+          <option value="{{ e }}" {% if pedido.estado == e %}selected{% endif %}>{{ e }}</option>
+        {% endfor %}
+      </select>
+
+      <button type="submit" class="btn">Actualizar</button>
+
+      <button type="button" class="btn primary"
+        onclick="document.getElementById('select-estado').value='Entregado'; document.getElementById('form-estado').submit();">
+        ✅ Marcar como Entregado
+      </button>
+    </form>
+
+    <div class="card-actions" style="margin-top: 16px;">
+      <a class="btn" href="{{ url_for('productos.index') }}">Seguir comprando</a>
+      <a class="btn primary" href="{{ url_for('pedidos.nuevo') }}">Nuevo pedido</a>
+      <a class="btn" href="{{ url_for('pedidos.index') }}">Ver pedidos</a>
     </div>
   </div>
 {% endblock %}

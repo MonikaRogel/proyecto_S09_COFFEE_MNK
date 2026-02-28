@@ -1,21 +1,31 @@
 import sqlite3
 from pathlib import Path
 
-DB_PATH = Path("instance") / "coffee_mnk.db"
+# Ruta base del proyecto
+BASE_DIR = Path(__file__).resolve().parent.parent
+DB_PATH = BASE_DIR / "instance" / "coffee_mnk.db"
 
-def ensure_instance():
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 def connect():
-    ensure_instance()
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
+
+    # Activar claves foráneas en SQLite (MUY IMPORTANTE)
     conn.execute("PRAGMA foreign_keys = ON;")
+
     return conn
 
+
+def _col_exists(conn, table: str, col: str) -> bool:
+    cols = conn.execute(f"PRAGMA table_info({table})").fetchall()
+    return any(c["name"] == col for c in cols)
+
+
 def init_db():
-    """Crea todas las tablas si no existen."""
+    """Crea tablas si no existen + aplica migraciones ligeras."""
     with connect() as conn:
+
+        # ---------------- PRODUCTOS ----------------
         conn.execute("""
         CREATE TABLE IF NOT EXISTS productos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,15 +38,22 @@ def init_db():
         );
         """)
 
+        # ---------------- CLIENTES ----------------
         conn.execute("""
         CREATE TABLE IF NOT EXISTS clientes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nombre TEXT NOT NULL,
+            cedula TEXT,
             email TEXT UNIQUE,
             telefono TEXT
         );
         """)
 
+        # Migración ligera: agregar columna cedula si la BD es antigua
+        if not _col_exists(conn, "clientes", "cedula"):
+            conn.execute("ALTER TABLE clientes ADD COLUMN cedula TEXT;")
+
+        # ---------------- PEDIDOS ----------------
         conn.execute("""
         CREATE TABLE IF NOT EXISTS pedidos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,6 +66,7 @@ def init_db():
         );
         """)
 
+        # ---------------- PEDIDO ITEMS ----------------
         conn.execute("""
         CREATE TABLE IF NOT EXISTS pedido_items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -61,3 +79,5 @@ def init_db():
             FOREIGN KEY(producto_id) REFERENCES productos(id) ON DELETE RESTRICT
         );
         """)
+
+        conn.commit()

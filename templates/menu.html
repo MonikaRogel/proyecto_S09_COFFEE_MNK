@@ -28,9 +28,10 @@
           </div>
 
           <div class="card-actions">
-            <a class="btn small" href="{{ url_for('producto', slug=slug) }}">Ver detalle</a>
+            <a class="btn small" href="{{ url_for('productos.detalle', slug=slug) }}">Ver detalle</a>
+
             {% if p.stock > 0 %}
-              <a class="btn small primary" href="{{ url_for('pedido_nuevo', producto=slug) }}">Pedir</a>
+              <a class="btn small primary" href="{{ url_for('pedidos.nuevo', producto=slug) }}">Pedir</a>
             {% else %}
               <span class="btn small disabled">No disponible</span>
             {% endif %}

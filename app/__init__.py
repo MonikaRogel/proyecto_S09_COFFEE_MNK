@@ -4,14 +4,9 @@ from .db import init_db
 from .seed import seed_if_empty
 
 def create_app():
-    app = Flask(
-        __name__,
-        template_folder="../templates",
-        static_folder="../static",
-    )
+    app = Flask(__name__, template_folder="../templates", static_folder="../static")
 
-    # IMPORTANTE: cargar Config (SECRET_KEY, etc.)
-    app.config.from_object(Config)
+    app.config.from_object(Config)  # ✅ SECRET_KEY y demás
 
     with app.app_context():
         init_db()
@@ -26,7 +21,9 @@ def create_app():
     from .routes.pedidos import bp as pedidos_bp
     app.register_blueprint(pedidos_bp, url_prefix="/pedidos")
 
-    # En templates usa "blueprints", no current_app
+    from .routes.clientes import bp as clientes_bp
+    app.register_blueprint(clientes_bp, url_prefix="/clientes")
+
     @app.context_processor
     def inject_blueprints():
         return {"blueprints": app.blueprints}

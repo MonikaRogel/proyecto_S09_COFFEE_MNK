@@ -19,22 +19,21 @@
 
       <nav class="nav">
         <a href="{{ url_for('main.home') }}" class="nav-link">Inicio</a>
+        <a href="{{ url_for('productos.index') }}" class="nav-link">Menú</a>
+        <a href="{{ url_for('productos.inventario') }}" class="nav-link">Inventario</a>
+        <a href="{{ url_for('pedidos.index') }}" class="nav-link">Pedidos</a>
+        <a href="{{ url_for('clientes.index') }}" class="nav-link">Clientes</a>
 
-        {% if 'productos' in blueprints %}
-          <a href="{{ url_for('productos.index') }}" class="nav-link">Menú</a>
-          <a href="{{ url_for('productos.inventario') }}" class="nav-link">Inventario</a>
-        {% endif %}
+        <!-- NUEVO -->
+        <a href="{{ url_for('pedidos.index') }}" class="nav-link">Pedidos</a>
 
-        {% if 'pedidos' in blueprints %}
-          <a href="{{ url_for('pedidos.nuevo') }}" class="nav-link nav-cta">Nuevo pedido</a>
-        {% endif %}
+        <a href="{{ url_for('pedidos.nuevo') }}" class="nav-link nav-cta">Nuevo pedido</a>
 
-        {% if 'clientes' in blueprints %}
-          <a href="{{ url_for('clientes.index') }}" class="nav-link">Clientes</a>
-        {% endif %}
+        <!-- Si ya creaste el CRUD de clientes, deja esto activo -->
+        <a href="{{ url_for('clientes.index') }}" class="nav-link">Clientes</a>
 
         <a href="{{ url_for('main.about') }}" class="nav-link">Acerca de</a>
-      </nav>     
+      </nav>
     </div>
   </header>
 
@@ -54,8 +53,8 @@
 
   <footer class="footer">
     <div class="container footer-row">
-      <p>COFFEE_MNK · Sistema de gestión de cafetería</p>
-      <p class="muted">Proyecto académico · Flask + Jinja2</p>
+      <p>Sistema de gestión de cafetería - COFFEE_MNK </p>
+      <p class="muted">Proyecto académico Monica Rogel</p>
     </div>
   </footer>
 

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="page-head">
+    <h1>Pedidos</h1>
+    <p class="muted">Listado de pedidos registrados.</p>
+  </div>
+
+  <div class="card plain" style="margin-bottom:16px;">
+    <form class="form" method="get" action="{{ url_for('pedidos.index') }}">
+      <div class="form-grid" style="grid-template-columns: 1fr auto;">
+        <label class="field">
+          <span class="label">Filtrar por estado</span>
+          <select name="estado">
+            <option value="" {% if not estado %}selected{% endif %}>Todos</option>
+            <option value="En preparación" {% if estado == "En preparación" %}selected{% endif %}>En preparación</option>
+            <option value="Listo" {% if estado == "Listo" %}selected{% endif %}>Listo</option>
+            <option value="Entregado" {% if estado == "Entregado" %}selected{% endif %}>Entregado</option>
+            <option value="Cancelado" {% if estado == "Cancelado" %}selected{% endif %}>Cancelado</option>
+          </select>
+        </label>
+
+        <div class="form-actions" style="justify-content:flex-end; align-items:flex-end;">
+          <button class="btn" type="submit">Aplicar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Fecha</th>
+          <th>Cliente</th>
+          <th>Estado</th>
+          <th>Total</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if pedidos and pedidos|length > 0 %}
+          {% for p in pedidos %}
+            <tr>
+              <td>{{ p.id }}</td>
+              <td class="muted">{{ p.fecha }}</td>
+              <td>{{ p.cliente_nombre }}</td>
+              <td>
+                <span class="badge
+                  {% if p.estado == 'Entregado' %}badge-success
+                  {% elif p.estado == 'Cancelado' %}badge-error
+                  {% elif p.estado == 'Listo' %}badge-warning
+                  {% else %}badge-info{% endif %}">
+                  {{ p.estado }}
+                </span>
+              </td>
+              <td><strong>${{ "%.2f"|format(p.total) }}</strong></td>
+              <td>
+                <a class="link" href="{{ url_for('pedidos.detalle', pedido_id=p.id) }}">Ver</a>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="6" class="muted">No hay pedidos para mostrar.</td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-actions" style="margin-top:16px;">
+    <a class="btn" href="{{ url_for('productos.index') }}">Ir al menú</a>
+    <a class="btn primary" href="{{ url_for('pedidos.nuevo') }}">Nuevo pedido</a>
+  </div>
+{% endblock %}
