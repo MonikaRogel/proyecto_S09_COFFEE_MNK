@@ -1,10 +1,13 @@
 import sqlite3
 from pathlib import Path
+import os  # ← IMPORTANTE: agregar esta línea
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DB_PATH = BASE_DIR / "instance" / "coffee_mnk.db"
 
 def connect():
+    # Crear el directorio instance si no existe
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON;")
@@ -16,7 +19,7 @@ def _col_exists(conn, table: str, col: str) -> bool:
 
 def init_db():
     with connect() as conn:
-        # Tabla productos
+        # Productos
         conn.execute("""
         CREATE TABLE IF NOT EXISTS productos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,7 +32,7 @@ def init_db():
         );
         """)
 
-        # Tabla clientes (con cedula)
+        # Clientes (con cedula)
         conn.execute("""
         CREATE TABLE IF NOT EXISTS clientes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,10 +42,11 @@ def init_db():
             telefono TEXT
         );
         """)
+        # Migración: agregar cedula si no existe (para BD antiguas)
         if not _col_exists(conn, "clientes", "cedula"):
             conn.execute("ALTER TABLE clientes ADD COLUMN cedula TEXT;")
 
-        # Tabla pedidos
+        # Pedidos
         conn.execute("""
         CREATE TABLE IF NOT EXISTS pedidos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,7 +59,7 @@ def init_db():
         );
         """)
 
-        # Tabla pedido_items
+        # Pedido items
         conn.execute("""
         CREATE TABLE IF NOT EXISTS pedido_items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
