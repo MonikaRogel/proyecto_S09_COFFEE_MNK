@@ -10,17 +10,19 @@ def create_app():
                 static_folder=os.path.join(basedir, 'static'))
     app.config.from_object(Config)
 
-    # Crear el directorio 'instance' si no existe (¡clave para Render!)
+    # Crear el directorio 'instance' si no existe
     instance_path = os.path.join(basedir, 'instance')
     os.makedirs(instance_path, exist_ok=True)
 
-    # Configurar SQLAlchemy con la ruta completa
+    # Configurar SQLAlchemy
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(instance_path, 'coffee_mnk.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
     with app.app_context():
-        db.create_all()  # Ahora la carpeta instance ya existe
+        # Importar los modelos para que SQLAlchemy los registre
+        from . import models  # Esto importa todos los modelos definidos en models.py
+        db.create_all()       # Ahora las tablas se crearán correctamente
 
     # Registrar blueprints
     from .routes.main import bp as main_bp
