@@ -23,15 +23,8 @@
         <a href="{{ url_for('productos.inventario') }}" class="nav-link">Inventario</a>
         <a href="{{ url_for('pedidos.index') }}" class="nav-link">Pedidos</a>
         <a href="{{ url_for('clientes.index') }}" class="nav-link">Clientes</a>
-
-        <!-- NUEVO -->
-        <a href="{{ url_for('pedidos.index') }}" class="nav-link">Pedidos</a>
-
+        <a href="{{ url_for('datos.index') }}" class="nav-link">Datos</a>   <!-- Semana 12: persistencia con archivos -->
         <a href="{{ url_for('pedidos.nuevo') }}" class="nav-link nav-cta">Nuevo pedido</a>
-
-        <!-- Si ya creaste el CRUD de clientes, deja esto activo -->
-        <a href="{{ url_for('clientes.index') }}" class="nav-link">Clientes</a>
-
         <a href="{{ url_for('main.about') }}" class="nav-link">Acerca de</a>
       </nav>
     </div>

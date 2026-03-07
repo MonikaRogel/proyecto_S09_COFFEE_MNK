@@ -114,47 +114,49 @@ a{ color: inherit; text-decoration: none; }
 }
 
 /* Hero */
-.hero{
+.hero {
   border-radius: var(--radius);
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
   overflow: hidden;
   background:
-    linear-gradient(90deg, rgba(43,29,18,0.86), rgba(43,29,18,0.45)),
+    linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%),
     url("https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=1400&q=70");
   background-size: cover;
   background-position: center;
-  padding: 22px;
-  margin-bottom: 18px;
+  padding: 40px 30px;  /* Más espacio interno */
+  margin-bottom: 25px;
 }
 
-.hero-content{
-  max-width: 680px;
+.hero-content {
+  max-width: 650px;
+  background-color: rgba(0,0,0,0.2);
+  padding: 15px 20px;
+  border-radius: 12px;
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
 }
 
-.hero h1{
+.hero h1 {
   color: #fff;
-  font-size: 28px;
-  margin-bottom: 8px;
+  font-size: 32px;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 
-.hero p{
-  color: #f3e9de;
+.hero p {
+  color: #f0f0f0;
   line-height: 1.6;
-  margin-bottom: 14px;
+  margin-bottom: 18px;
+  font-size: 1.1rem;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
 
-.hero-actions{
+.hero-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 12px;
-}
-
-.hero-badges{
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  margin-top: 10px;
 }
 
 .pill{
@@ -531,3 +533,24 @@ input:focus, select:focus, textarea:focus{
   gap: 10px;
   flex-wrap: wrap;
 }
+
+.field small.error { color: #dc3545; }
+.field small.valid { color: #28a745; }
+.field small { display: block; margin-top: 5px; font-size: 0.875em; }
+.cards-mt-20 { margin-top: 20px; }
+.mt-15 {
+    margin-top: 15px;
+}
+
+/* Sección informativa de persistencia (Semana 12) */
+.persistence-info {
+    background-color: var(--surface);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+}
+
+.card-bg-capuccino { background-image: url('https://images.unsplash.com/photo-1481391319762-47dff72954d9?auto=format&fit=crop&w=1200&q=70'); }
+.card-bg-mocaccino { background-image: url('https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1200&q=70'); }
+.card-bg-latte { background-image: url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1200&q=70'); }

@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-head">
+    <h1>Persistencia con archivos</h1>
+    <p class="muted">Guarda y consulta datos en formatos TXT, JSON y CSV.</p>
+</div>
+
+<div class="card plain">
+    <h2>Agregar nuevo registro</h2>
+    <form method="POST" class="form" id="form-datos">
+        <div class="form-grid">
+            <label class="field">
+                <span class="label">Nombre *</span>
+                <input type="text" name="nombre" id="nombre" required 
+                       pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ ]+" 
+                       title="Solo letras y espacios"
+                       oninput="validarNombre(this)">
+                <small class="form-text text-muted" id="nombre-msg">Solo letras y espacios.</small>
+            </label>
+            <label class="field">
+                <span class="label">Cédula</span>
+                <input type="text" name="cedula" id="cedula" 
+                       pattern="\d{10}" 
+                       maxlength="10"
+                       title="Debe tener exactamente 10 dígitos numéricos"
+                       oninput="validarCedula(this)">
+                <small class="form-text text-muted" id="cedula-msg">10 dígitos numéricos.</small>
+            </label>
+            <label class="field">
+                <span class="label">Email</span>
+                <input type="email" name="email" id="email"
+                       oninput="validarEmail(this)">
+                <small class="form-text text-muted" id="email-msg">Formato de correo válido.</small>
+            </label>
+            <label class="field">
+                <span class="label">Teléfono</span>
+                <input type="text" name="telefono" id="telefono" 
+                       pattern="09\d{8}" 
+                       maxlength="10"
+                       title="Debe comenzar con 09 y tener 10 dígitos"
+                       oninput="validarTelefono(this)">
+                <small class="form-text text-muted" id="telefono-msg">Ej: 0991234567 (10 dígitos, empieza con 09).</small>
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn primary">Guardar en todos los formatos</button>
+        </div>
+    </form>
+</div>
+
+<script>
+function mostrarMensaje(inputId, msgElementId, esValido, mensajeError, mensajeOk) {
+    const input = document.getElementById(inputId);
+    const msg = document.getElementById(msgElementId);
+    if (input.value.length > 0 && !esValido) {
+        msg.classList.add('error');
+        msg.classList.remove('valid');
+        msg.textContent = mensajeError;
+        input.setCustomValidity(mensajeError);
+    } else {
+        msg.classList.remove('error');
+        if (input.value.length > 0 && esValido) {
+            msg.classList.add('valid');
+            msg.textContent = mensajeOk + ' ✓';
+        } else {
+            msg.classList.remove('valid');
+            msg.textContent = mensajeOk;
+        }
+        input.setCustomValidity('');
+    }
+}
+
+function validarNombre(input) {
+    const esValido = /^[A-Za-zÁÉÍÓÚáéíóúñÑ ]+$/.test(input.value);
+    mostrarMensaje('nombre', 'nombre-msg', esValido, 'Solo letras y espacios.', 'Solo letras y espacios.');
+}
+
+function validarCedula(input) {
+    const esValido = /^\d{10}$/.test(input.value);
+    mostrarMensaje('cedula', 'cedula-msg', esValido, 'Debe ser exactamente 10 dígitos numéricos.', '10 dígitos numéricos.');
+}
+
+function validarTelefono(input) {
+    const esValido = /^09\d{8}$/.test(input.value);
+    mostrarMensaje('telefono', 'telefono-msg', esValido, 'Debe empezar con 09 y tener 10 dígitos.', 'Ej: 0991234567 (10 dígitos, empieza con 09).');
+}
+
+function validarEmail(input) {
+    const esValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+    mostrarMensaje('email', 'email-msg', esValido, 'Correo electrónico inválido.', 'Formato de correo válido.');
+}
+
+// Inicializar validaciones al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    validarNombre(document.getElementById('nombre'));
+    validarCedula(document.getElementById('cedula'));
+    validarEmail(document.getElementById('email'));
+    validarTelefono(document.getElementById('telefono'));
+});
+</script>
+
+<div class="cards cards-mt-20">
+    <!-- Datos desde TXT -->
+    <div class="card plain">
+        <h3>Datos desde TXT</h3>
+        {% if datos_txt %}
+        <table class="table">
+            <thead>
+                <tr><th>Nombre</th><th>Cédula</th><th>Email</th><th>Teléfono</th></tr>
+            </thead>
+            <tbody>
+                {% for d in datos_txt %}
+                <tr><td>{{ d.nombre }}</td><td>{{ d.cedula }}</td><td>{{ d.email }}</td><td>{{ d.telefono }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="muted">No hay datos en TXT.</p>
+        {% endif %}
+    </div>
+
+    <!-- Datos desde JSON -->
+    <div class="card plain">
+        <h3>Datos desde JSON</h3>
+        {% if datos_json %}
+        <table class="table">
+            <thead>
+                <tr><th>Nombre</th><th>Cédula</th><th>Email</th><th>Teléfono</th></tr>
+            </thead>
+            <tbody>
+                {% for d in datos_json %}
+                <tr><td>{{ d.nombre }}</td><td>{{ d.cedula }}</td><td>{{ d.email }}</td><td>{{ d.telefono }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="muted">No hay datos en JSON.</p>
+        {% endif %}
+    </div>
+
+    <!-- Datos desde CSV -->
+    <div class="card plain">
+        <h3>Datos desde CSV</h3>
+        {% if datos_csv %}
+        <table class="table">
+            <thead>
+                <tr><th>Nombre</th><th>Cédula</th><th>Email</th><th>Teléfono</th></tr>
+            </thead>
+            <tbody>
+                {% for d in datos_csv %}
+                <tr><td>{{ d.nombre }}</td><td>{{ d.cedula }}</td><td>{{ d.email }}</td><td>{{ d.telefono }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="muted">No hay datos en CSV.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card-actions">
+    <a href="{{ url_for('datos.index') }}" class="btn">Actualizar</a>
+</div>
+{% endblock %}

@@ -1,10 +1,29 @@
 from flask import Blueprint, render_template
+from ..models import Producto
 
 bp = Blueprint("main", __name__)
 
+def _fetch_menu_dict():
+    """Obtiene todos los productos y los devuelve como diccionario {slug: producto}"""
+    productos = Producto.query.order_by(Producto.id.desc()).all()
+    menu = {}
+    for p in productos:
+        menu[p.slug] = {
+            "id": p.id,
+            "nombre": p.nombre,
+            "precio": p.precio,
+            "stock": p.stock,
+            "img": p.img or "",
+            "desc": p.descripcion or "",
+        }
+    return menu
+
 @bp.route("/")
 def home():
-    return render_template("index.html", titulo="Inicio")
+    menu = _fetch_menu_dict()
+    # Puedes cambiar los slugs destacados si lo deseas
+    destacados = ["capuccino", "mocaccino", "latte"]
+    return render_template("index.html", titulo="Inicio", menu=menu, destacados=destacados)
 
 @bp.route("/about")
 def about():

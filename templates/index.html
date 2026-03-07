@@ -1,66 +1,75 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <section class="hero">
+<section class="hero">
     <div class="hero-content">
-      <h1>Sistema de ventas para cafetería</h1>
-      <p>
-        Consulta productos del menú, registra pedidos y controla inventario de forma rápida.
-      </p>
-
-      <div class="hero-actions">
-        <a class="btn primary" href="{{ url_for('productos.index') }}">Ver menú</a>
-        <a class="btn" href="{{ url_for('pedidos.nuevo') }}">Registrar pedido</a>
-      </div>
-
-      <div class="hero-badges">
-        <span class="pill">Productos</span>
-        <span class="pill">Pedidos</span>
-        <span class="pill">Inventario</span>
-      </div>
+        <h1>Sistema de ventas para cafetería</h1>
+        <p>
+            Consulta productos del menú, registra pedidos y controla inventario de forma rápida.
+        </p>
+        <div class="hero-actions">
+            <a class="btn primary" href="{{ url_for('productos.index') }}">Ver menú</a>
+            <a class="btn" href="{{ url_for('pedidos.nuevo') }}">Registrar pedido</a>
+        </div>
     </div>
-  </section>
+</section>
 
-  <section class="section">
+<!-- Sección informativa sobre persistencia (Semana 12) -->
+<section class="section persistence-info">
+    <h2>Persistencia de datos - Semana 12</h2>
+    <p>Este proyecto implementa dos mecanismos de persistencia según la consigna:</p>
+    <ul class="list">
+        <li><strong>Base de datos SQLite con SQLAlchemy:</strong> Utilizado para la gestión de <a href="{{ url_for('clientes.index') }}">clientes</a>, <a href="{{ url_for('productos.index') }}">productos</a> y <a href="{{ url_for('pedidos.index') }}">pedidos</a>.</li>
+        <li><strong>Archivos (TXT, JSON, CSV):</strong> Accede a la sección <a href="{{ url_for('datos.index') }}" class="link"><strong>Datos</strong></a> para probar el formulario que guarda y lee información en estos formatos, cumpliendo con el requisito de la semana 12.</li>
+    </ul>
+    <p class="muted">Los archivos generados se almacenan en la carpeta <code>inventario/data/</code> del proyecto.</p>
+    <div class="mt-15">
+        <a href="{{ url_for('datos.index') }}" class="btn primary">Ir a la sección Datos</a>
+    </div>
+</section>
+
+<section class="section">
     <div class="section-head">
-      <h2>Destacados</h2>
-      <a class="btn primary" href="{{ url_for('productos.index') }}">Ver menú</a>
+        <h2>Destacados</h2>
+        <a class="btn primary" href="{{ url_for('productos.index') }}">Ver menú</a>
     </div>
-
     <div class="cards">
-      {% for slug in destacados %}
-        {% set p = menu[slug] %}
-        <article class="card">
-          <div class="card-media" style="background-image:url('{{ p.img }}');"></div>
-
-          <div class="card-body">
-            <div class="card-title-row">
-              <h3>{{ p.nombre }}</h3>
-              <span class="price">${{ "%.2f"|format(p.precio) }}</span>
-            </div>
-
-            <p class="muted">{{ p.desc }}</p>
-
-            <div class="card-meta">
-              {% if p.stock > 0 %}
-                <span class="badge ok">Stock: {{ p.stock }}</span>
-              {% else %}
-                <span class="badge warn">Agotado</span>
-              {% endif %}
-            </div>
-
-            <div class="card-actions">
-              <a class="btn small" href="{{ url_for('productos.detalle', slug=slug) }}">Ver detalle</a>
-
-              {% if p.stock > 0 %}
-                <a class="btn small primary" href="{{ url_for('pedidos.nuevo', producto=slug) }}">Pedir</a>
-              {% else %}
-                <span class="btn small disabled">No disponible</span>
-              {% endif %}
-            </div>
-          </div>
-        </article>
-      {% endfor %}
+        {% for slug in ['capuccino', 'mocaccino', 'latte'] %}
+            {% set p = menu[slug] %}
+            <article class="card">
+                <div class="card-media" data-bg="{{ p.img }}"></div>
+                <div class="card-body">
+                    <div class="card-title-row">
+                        <h3>{{ p.nombre }}</h3>
+                        <span class="price">${{ "%.2f"|format(p.precio) }}</span>
+                    </div>
+                    <p class="muted">{{ p.desc }}</p>
+                    <div class="card-meta">
+                        {% if p.stock > 0 %}
+                            <span class="badge ok">Stock: {{ p.stock }}</span>
+                        {% else %}
+                            <span class="badge warn">Agotado</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-actions">
+                        <a class="btn small" href="{{ url_for('productos.detalle', slug=slug) }}">Ver detalle</a>
+                        {% if p.stock > 0 %}
+                            <a class="btn small primary" href="{{ url_for('pedidos.nuevo', producto=slug) }}">Pedir</a>
+                        {% else %}
+                            <span class="btn small disabled">No disponible</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+        {% endfor %}
     </div>
-  </section>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.card-media[data-bg]').forEach(function(el) {
+        el.style.backgroundImage = 'url("' + el.dataset.bg + '")';
+    });
+});
+</script>
 {% endblock %}

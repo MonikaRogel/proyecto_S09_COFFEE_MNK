@@ -1,88 +1,109 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="page-head">
-    <h1>Clientes</h1>
-    <p class="muted">Administra clientes (crear, editar, eliminar).</p>
-  </div>
+<style>
+    .field small.error { color: #dc3545; }
+    .field small.valid { color: #28a745; }
+    .field small { display: block; margin-top: 5px; font-size: 0.875em; }
+</style>
 
-  <div class="card plain" style="margin-bottom: 16px;">
-    <form class="form" method="get" action="{{ url_for('clientes.index') }}">
-      <div class="form-grid" style="grid-template-columns: 1fr auto auto;">
+<div class="page-head">
+    <h1>{% if cliente %}Editar{% else %}Nuevo{% endif %} Cliente</h1>
+</div>
+
+<form method="POST" class="form" id="form-cliente">
+    <div class="form-grid">
         <label class="field">
-          <span class="label">Buscar</span>
-          <input name="q" type="text" value="{{ q }}" placeholder="Nombre, cédula, email o teléfono">
+            <span class="label">Nombre *</span>
+            <input type="text" name="nombre" id="nombre" required
+                   value="{{ cliente.nombre if cliente else '' }}"
+                   pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ ]+"
+                   title="Solo letras y espacios"
+                   oninput="validarNombre(this)">
+            <small class="form-text text-muted" id="nombre-msg">Solo letras y espacios.</small>
         </label>
+        <label class="field">
+            <span class="label">Cédula</span>
+            <input type="text" name="cedula" id="cedula"
+                   value="{{ cliente.cedula if cliente else '' }}"
+                   pattern="\d{10}"
+                   maxlength="10"
+                   title="Debe tener exactamente 10 dígitos numéricos"
+                   oninput="validarCedula(this)">
+            <small class="form-text text-muted" id="cedula-msg">10 dígitos numéricos.</small>
+        </label>
+        <label class="field">
+            <span class="label">Email</span>
+            <input type="email" name="email" id="email"
+                   value="{{ cliente.email if cliente else '' }}"
+                   oninput="validarEmail(this)">
+            <small class="form-text text-muted" id="email-msg">Formato de correo válido.</small>
+        </label>
+        <label class="field">
+            <span class="label">Teléfono</span>
+            <input type="text" name="telefono" id="telefono"
+                   value="{{ cliente.telefono if cliente else '' }}"
+                   pattern="09\d{8}"
+                   maxlength="10"
+                   title="Debe comenzar con 09 y tener 10 dígitos"
+                   oninput="validarTelefono(this)">
+            <small class="form-text text-muted" id="telefono-msg">Ej: 0991234567 (10 dígitos, empieza con 09).</small>
+        </label>
+    </div>
+    <div class="form-actions">
+        <a href="{{ url_for('clientes.index') }}" class="btn">Cancelar</a>
+        <button type="submit" class="btn primary">Guardar</button>
+    </div>
+</form>
 
-        <div class="form-actions" style="justify-content:flex-end; align-items:flex-end;">
-          <button class="btn" type="submit">Buscar</button>
-        </div>
+<script>
+function mostrarMensaje(inputId, msgElementId, esValido, mensajeError, mensajeOk) {
+    const input = document.getElementById(inputId);
+    const msg = document.getElementById(msgElementId);
+    if (input.value.length > 0 && !esValido) {
+        msg.classList.add('error');
+        msg.classList.remove('valid');
+        msg.textContent = mensajeError;
+        input.setCustomValidity(mensajeError);
+    } else {
+        msg.classList.remove('error');
+        if (input.value.length > 0 && esValido) {
+            msg.classList.add('valid');
+            msg.textContent = mensajeOk + ' ✓';
+        } else {
+            msg.classList.remove('valid');
+            msg.textContent = mensajeOk;
+        }
+        input.setCustomValidity('');
+    }
+}
 
-        <div class="form-actions" style="justify-content:flex-end; align-items:flex-end;">
-          <a class="btn primary" href="{{ url_for('clientes.nuevo') }}">+ Nuevo</a>
-        </div>
-      </div>
-    </form>
-  </div>
+function validarNombre(input) {
+    const esValido = /^[A-Za-zÁÉÍÓÚáéíóúñÑ ]+$/.test(input.value);
+    mostrarMensaje('nombre', 'nombre-msg', esValido, 'Solo letras y espacios.', 'Solo letras y espacios.');
+}
 
-  <div class="table-wrap">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Nombre</th>
-          <th>Cédula</th>
-          <th>Email</th>
-          <th>Teléfono</th>
-          <th>Pedidos</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% if clientes and clientes|length > 0 %}
-          {% for c in clientes %}
-            <tr>
-              <td>{{ c.id }}</td>
-              <td><strong>{{ c.nombre }}</strong></td>
-              <td class="muted">{{ c.cedula or "-" }}</td>
-              <td class="muted">{{ c.email or "-" }}</td>
-              <td class="muted">{{ c.telefono or "-" }}</td>
-              <td>
-                <span class="badge {% if c.pedidos_count > 0 %}badge-info{% endif %}">
-                  {{ c.pedidos_count }}
-                </span>
-              </td>
-              <td>
-                <a class="link" href="{{ url_for('clientes.editar', cliente_id=c.id) }}">Editar</a>
+function validarCedula(input) {
+    const esValido = /^\d{10}$/.test(input.value);
+    mostrarMensaje('cedula', 'cedula-msg', esValido, 'Debe ser exactamente 10 dígitos numéricos.', '10 dígitos numéricos.');
+}
 
-                {% if c.pedidos_count == 0 %}
-                  <span class="muted">·</span>
-                  <form method="post"
-                        action="{{ url_for('clientes.eliminar', cliente_id=c.id) }}"
-                        style="display:inline"
-                        onsubmit="return confirm('¿Eliminar cliente {{ c.nombre }}?');">
-                    <button class="link" type="submit" style="background:none;border:none;padding:0;cursor:pointer;">
-                      Eliminar
-                    </button>
-                  </form>
-                {% else %}
-                  <span class="muted">·</span>
-                  <span class="muted">No eliminable</span>
-                {% endif %}
-              </td>
-            </tr>
-          {% endfor %}
-        {% else %}
-          <tr>
-            <td colspan="7" class="muted">No hay clientes para mostrar.</td>
-          </tr>
-        {% endif %}
-      </tbody>
-    </table>
-  </div>
+function validarTelefono(input) {
+    const esValido = /^09\d{8}$/.test(input.value);
+    mostrarMensaje('telefono', 'telefono-msg', esValido, 'Debe empezar con 09 y tener 10 dígitos.', 'Ej: 0991234567 (10 dígitos, empieza con 09).');
+}
 
-  <div class="card-actions" style="margin-top: 16px;">
-    <a class="btn" href="{{ url_for('main.home') }}">Inicio</a>
-    <a class="btn" href="{{ url_for('pedidos.nuevo') }}">Nuevo pedido</a>
-  </div>
+function validarEmail(input) {
+    const esValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+    mostrarMensaje('email', 'email-msg', esValido, 'Correo electrónico inválido.', 'Formato de correo válido.');
+}
+
+// Inicializar validaciones al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    validarNombre(document.getElementById('nombre'));
+    validarCedula(document.getElementById('cedula'));
+    validarEmail(document.getElementById('email'));
+    validarTelefono(document.getElementById('telefono'));
+});
+</script>
 {% endblock %}
