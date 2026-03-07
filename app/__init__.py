@@ -20,21 +20,14 @@ def create_app():
     db.init_app(app)
 
     with app.app_context():
-        # Importar los modelos para que SQLAlchemy los conozca
+        # Importar modelos y crear tablas
         from . import models
-        print("Modelos importados. Creando tablas...")
         db.create_all()
         print("Tablas creadas (o ya existían).")
 
-        # Verificar si hay productos (opcional, para depuración)
-        try:
-            from .models import Producto
-            num_productos = Producto.query.count()
-            print(f"📦 Productos en base de datos: {num_productos}")
-            if num_productos == 0:
-                print(" No hay productos. Puedes cargarlos manualmente o ejecutar un seed.")
-        except Exception as e:
-            print(f" Error al consultar productos: {e}")
+        # Ejecutar seed si la base está vacía
+        from .seed import seed_if_empty
+        seed_if_empty()
 
     # Registrar blueprints
     from .routes.main import bp as main_bp
