@@ -1,6 +1,6 @@
 from flask import Flask
 from .config import Config
-from .extensions import db  # Solo importamos SQLAlchemy
+from .extensions import db
 import os
 
 def create_app():
@@ -10,17 +10,17 @@ def create_app():
                 static_folder=os.path.join(basedir, 'static'))
     app.config.from_object(Config)
 
-    # Configurar SQLAlchemy
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance', 'coffee_mnk.db')
+    # Crear el directorio 'instance' si no existe (¡clave para Render!)
+    instance_path = os.path.join(basedir, 'instance')
+    os.makedirs(instance_path, exist_ok=True)
+
+    # Configurar SQLAlchemy con la ruta completa
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(instance_path, 'coffee_mnk.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
     with app.app_context():
-        # Crear tablas según los modelos (si no existen)
-        db.create_all()
-        # Las funciones antiguas ya no son necesarias y se comentan para evitar conflictos
-        # init_db()
-        # seed_if_empty()
+        db.create_all()  # Ahora la carpeta instance ya existe
 
     # Registrar blueprints
     from .routes.main import bp as main_bp
