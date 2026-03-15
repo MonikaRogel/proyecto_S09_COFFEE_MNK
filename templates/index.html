@@ -1,75 +1,139 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+{# ── HERO ──────────────────────────────────────────────────── #}
 <section class="hero">
-    <div class="hero-content">
-        <h1>Sistema de ventas para cafetería</h1>
-        <p>
-            Consulta productos del menú, registra pedidos y controla inventario de forma rápida.
-        </p>
-        <div class="hero-actions">
-            <a class="btn primary" href="{{ url_for('productos.index') }}">Ver menú</a>
-            <a class="btn" href="{{ url_for('pedidos.nuevo') }}">Registrar pedido</a>
-        </div>
+  {# overlay via CSS ::before — no extra div needed #}
+
+  <div class="hero-content">
+
+    <span class="hero-badge">Cafetería · Artesanal · Monik</span>
+
+    <h1>Tu mejor café<br>está a un clic.</h1>
+
+    <p>
+      Explora nuestro menú, encuentra tu bebida favorita
+      y disfruta cada sorbo preparado con dedicación.
+    </p>
+
+    <div class="hero-actions">
+      <a href="{{ url_for('productos.index') }}" class="btn hero-primary">
+        ☕ Explorar menú
+      </a>
+      <a href="{{ url_for('pedidos.nuevo') }}" class="btn hero-secondary">
+        Crear pedido
+      </a>
     </div>
+
+  </div>
+
+  {# Mini stats strip — decorativo, sin datos reales #}
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <span class="hero-stat-value">3+</span>
+      <span class="hero-stat-label">Bebidas</span>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-value">100%</span>
+      <span class="hero-stat-label">Artesanal</span>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-value">1 clic</span>
+      <span class="hero-stat-label">Para pedir</span>
+    </div>
+  </div>
+
 </section>
 
-<!-- Sección informativa sobre persistencia (Semana 12) -->
-<section class="section persistence-info">
-    <h2>Persistencia de datos - Semana 12</h2>
-    <p>Este proyecto implementa dos mecanismos de persistencia según la consigna:</p>
-    <ul class="list">
-        <li><strong>Base de datos SQLite con SQLAlchemy:</strong> Utilizado para la gestión de <a href="{{ url_for('clientes.index') }}">clientes</a>, <a href="{{ url_for('productos.index') }}">productos</a> y <a href="{{ url_for('pedidos.index') }}">pedidos</a>.</li>
-        <li><strong>Archivos (TXT, JSON, CSV):</strong> Accede a la sección <a href="{{ url_for('datos.index') }}" class="link"><strong>Datos</strong></a> para probar el formulario que guarda y lee información en estos formatos, cumpliendo con el requisito de la semana 12.</li>
-    </ul>
-    <p class="muted">Los archivos generados se almacenan en la carpeta <code>inventario/data/</code> del proyecto.</p>
-    <div class="mt-15">
-        <a href="{{ url_for('datos.index') }}" class="btn primary">Ir a la sección Datos</a>
-    </div>
-</section>
 
+{# ── DESTACADOS ────────────────────────────────────────────── #}
 <section class="section">
-    <div class="section-head">
-        <h2>Destacados</h2>
-        <a class="btn primary" href="{{ url_for('productos.index') }}">Ver menú</a>
+
+  <div class="section-head section-head-featured">
+    <div>
+      <h2>Destacados</h2>
+      <p class="muted section-subtext">
+        Selección especial de bebidas disponibles en el menú.
+      </p>
     </div>
-    <div class="cards">
-        {% for slug in ['capuccino', 'mocaccino', 'latte'] %}
-            {% set p = menu[slug] %}
-            <article class="card">
-                <div class="card-media" data-bg="{{ p.img }}"></div>
-                <div class="card-body">
-                    <div class="card-title-row">
-                        <h3>{{ p.nombre }}</h3>
-                        <span class="price">${{ "%.2f"|format(p.precio) }}</span>
-                    </div>
-                    <p class="muted">{{ p.desc }}</p>
-                    <div class="card-meta">
-                        {% if p.stock > 0 %}
-                            <span class="badge ok">Stock: {{ p.stock }}</span>
-                        {% else %}
-                            <span class="badge warn">Agotado</span>
-                        {% endif %}
-                    </div>
-                    <div class="card-actions">
-                        <a class="btn small" href="{{ url_for('productos.detalle', slug=slug) }}">Ver detalle</a>
-                        {% if p.stock > 0 %}
-                            <a class="btn small primary" href="{{ url_for('pedidos.nuevo', producto=slug) }}">Pedir</a>
-                        {% else %}
-                            <span class="btn small disabled">No disponible</span>
-                        {% endif %}
-                    </div>
-                </div>
-            </article>
-        {% endfor %}
-    </div>
+    <a class="btn primary" href="{{ url_for('productos.index') }}">Ver menú →</a>
+  </div>
+
+  <div class="cards">
+    {% for slug in ['capuccino', 'mocaccino', 'latte'] %}
+      {% set p = menu[slug] %}
+      <article class="card featured-card">
+
+        <div class="card-media card-bg-{{ slug }}" data-bg="{{ p.img }}"></div>
+
+        <div class="card-body">
+          <div class="card-title-row">
+            <div>
+              <h3>{{ p.nombre }}</h3>
+              <p class="card-description">{{ p.desc }}</p>
+            </div>
+            <span class="price">${{ "%.2f"|format(p.precio) }}</span>
+          </div>
+
+          <div class="card-meta">
+            {% if p.stock > 0 %}
+              <span class="badge ok">Disponible · Stock {{ p.stock }}</span>
+            {% else %}
+              <span class="badge warn">Agotado</span>
+            {% endif %}
+          </div>
+
+          <div class="card-actions">
+            <a class="btn small outline" href="{{ url_for('productos.detalle', slug=slug) }}">
+              Ver detalle
+            </a>
+            {% if p.stock > 0 %}
+              <a class="btn small primary" href="{{ url_for('pedidos.nuevo', producto=slug) }}">
+                Pedir ahora
+              </a>
+            {% else %}
+              <span class="btn small disabled">No disponible</span>
+            {% endif %}
+          </div>
+        </div>
+
+      </article>
+    {% endfor %}
+  </div>
+
 </section>
 
+
+{# ── JS: aplica data-bg + scroll-reveal suave ─────────────── #}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.card-media[data-bg]').forEach(function(el) {
-        el.style.backgroundImage = 'url("' + el.dataset.bg + '")';
+document.addEventListener('DOMContentLoaded', function () {
+
+  // Aplica background-image desde data-bg
+  document.querySelectorAll('.card-media[data-bg]').forEach(function (el) {
+    var src = el.dataset.bg;
+    if (src) el.style.backgroundImage = 'url("' + src + '")';
+  });
+
+  // Scroll-reveal con IntersectionObserver
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.style.animationPlayState = 'running';
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    // Las cards arrancan pausadas para el reveal
+    document.querySelectorAll('.card').forEach(function (card) {
+      card.style.animationPlayState = 'paused';
+      obs.observe(card);
     });
+  }
+
 });
 </script>
+
 {% endblock %}

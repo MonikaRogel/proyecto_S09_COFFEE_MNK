@@ -1,7 +1,9 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
-from ..models import Producto
+from flask import Blueprint, render_template, redirect, url_for, flash, request
+from ..models import Producto, PedidoItem
+from ..extensions import db
 
 bp = Blueprint("productos", __name__)
+
 
 def _fetch_menu_dict():
     productos = Producto.query.order_by(Producto.id.desc()).all()
@@ -17,10 +19,12 @@ def _fetch_menu_dict():
         }
     return menu
 
+
 @bp.route("/")
 def index():
     menu = _fetch_menu_dict()
     return render_template("menu.html", titulo="Menú", menu=menu)
+
 
 @bp.route("/inventario")
 def inventario():
@@ -34,6 +38,13 @@ def inventario():
         total_skus=total_skus,
         total_stock=total_stock,
     )
+
+
+@bp.route("/admin")
+def admin():
+    productos = Producto.query.order_by(Producto.nombre).all()
+    return render_template("productos_admin.html", titulo="Administrar Productos", productos=productos)
+
 
 @bp.route("/<slug>")
 def detalle(slug: str):
@@ -57,19 +68,6 @@ def detalle(slug: str):
         producto=prod_dict,
     )
 
-    from flask import Blueprint, render_template, redirect, url_for, flash, request
-    from ..models import Producto
-    from ..extensions import db
-
-    bp = Blueprint("productos", __name__)
-
-# ... (código existente: index, inventario, detalle)
-
-@bp.route("/admin")
-def admin():
-    """Lista administrativa de productos con opciones de editar/eliminar"""
-    productos = Producto.query.order_by(Producto.nombre).all()
-    return render_template("productos_admin.html", titulo="Administrar Productos", productos=productos)
 
 @bp.route("/nuevo", methods=["GET", "POST"])
 def nuevo():
@@ -95,7 +93,7 @@ def nuevo():
             precio=precio,
             stock=stock,
             img=img,
-            descripcion=descripcion
+            descripcion=descripcion,
         )
         db.session.add(producto)
         db.session.commit()
@@ -103,6 +101,7 @@ def nuevo():
         return redirect(url_for("productos.admin"))
 
     return render_template("producto_form.html", titulo="Nuevo Producto", producto=None)
+
 
 @bp.route("/<int:id>/editar", methods=["GET", "POST"])
 def editar(id):
@@ -121,11 +120,10 @@ def editar(id):
 
     return render_template("producto_form.html", titulo="Editar Producto", producto=producto)
 
+
 @bp.route("/<int:id>/eliminar", methods=["POST"])
 def eliminar(id):
     producto = Producto.query.get_or_404(id)
-    # Verificar si tiene pedidos asociados (opcional, para no eliminar si está en uso)
-    from ..models import PedidoItem
     if PedidoItem.query.filter_by(producto_id=id).first():
         flash("No se puede eliminar porque tiene pedidos asociados", "error")
         return redirect(url_for("productos.admin"))
