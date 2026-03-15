@@ -1,13 +1,14 @@
 import os
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
+    SECRET_KEY = 'dev-secret-key-change-in-production'
 
-    DB_HOST = os.environ.get('DB_HOST', 'localhost')
-    DB_PORT = os.environ.get('DB_PORT', '3306')
-    DB_USER = os.environ.get('DB_USER', 'root')
-    DB_PASSWORD = os.environ.get('DB_PASSWORD', '')
-    DB_NAME = os.environ.get('DB_NAME', 'coffee_mnk')
+    # Datos fijos de Railway (conexión directa para prueba)
+    DB_HOST = 'centerbeam.proxy.rlwy.net'
+    DB_PORT = '10485'
+    DB_USER = 'root'
+    DB_PASSWORD = 'szMZkSJLZRTVbGaVOiyMyzfXRESrROuB'   # tu contraseña exacta
+    DB_NAME = 'railway'
 
     SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False

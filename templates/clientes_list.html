@@ -1,88 +1,40 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="page-head">
-    <h1>Clientes</h1>
-    <p class="muted">Administra clientes (crear, editar, eliminar).</p>
-  </div>
+<div class="page-head">
+    <h1>Usuarios</h1>
+    <a class="btn primary" href="{{ url_for('usuarios.nuevo') }}">+ Nuevo Usuario</a>
+</div>
 
-  <div class="card plain" style="margin-bottom: 16px;">
-    <form class="form" method="get" action="{{ url_for('clientes.index') }}">
-      <div class="form-grid" style="grid-template-columns: 1fr auto auto;">
-        <label class="field">
-          <span class="label">Buscar</span>
-          <input name="q" type="text" value="{{ q }}" placeholder="Nombre, cédula, email o teléfono">
-        </label>
-
-        <div class="form-actions" style="justify-content:flex-end; align-items:flex-end;">
-          <button class="btn" type="submit">Buscar</button>
-        </div>
-
-        <div class="form-actions" style="justify-content:flex-end; align-items:flex-end;">
-          <a class="btn primary" href="{{ url_for('clientes.nuevo') }}">+ Nuevo</a>
-        </div>
-      </div>
-    </form>
-  </div>
-
-  <div class="table-wrap">
+<div class="table-wrap">
     <table class="table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Nombre</th>
-          <th>Cédula</th>
-          <th>Email</th>
-          <th>Teléfono</th>
-          <th>Pedidos</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% if clientes and clientes|length > 0 %}
-          {% for c in clientes %}
+        <thead>
             <tr>
-              <td>{{ c.id }}</td>
-              <td><strong>{{ c.nombre }}</strong></td>
-              <td class="muted">{{ c.cedula or "-" }}</td>
-              <td class="muted">{{ c.email or "-" }}</td>
-              <td class="muted">{{ c.telefono or "-" }}</td>
-              <td>
-                <span class="badge {% if c.pedidos_count > 0 %}badge-info{% endif %}">
-                  {{ c.pedidos_count }}
-                </span>
-              </td>
-              <td>
-                <a class="link" href="{{ url_for('clientes.editar', cliente_id=c.id) }}">Editar</a>
-
-                {% if c.pedidos_count == 0 %}
-                  <span class="muted">·</span>
-                  <form method="post"
-                        action="{{ url_for('clientes.eliminar', cliente_id=c.id) }}"
-                        style="display:inline"
-                        onsubmit="return confirm('¿Eliminar cliente {{ c.nombre }}?');">
-                    <button class="link" type="submit" style="background:none;border:none;padding:0;cursor:pointer;">
-                      Eliminar
-                    </button>
-                  </form>
-                {% else %}
-                  <span class="muted">·</span>
-                  <span class="muted">No eliminable</span>
-                {% endif %}
-              </td>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Acciones</th>
             </tr>
-          {% endfor %}
-        {% else %}
-          <tr>
-            <td colspan="7" class="muted">No hay clientes para mostrar.</td>
-          </tr>
-        {% endif %}
-      </tbody>
+        </thead>
+        <tbody>
+            {% for u in usuarios %}
+            <tr>
+                <td>{{ u.id }}</td>
+                <td>{{ u.nombre }}</td>
+                <td>{{ u.mail }}</td>
+                <td>
+                    <a class="btn small" href="{{ url_for('usuarios.editar', id=u.id) }}">Editar</a>
+                    <form method="post" action="{{ url_for('usuarios.eliminar', id=u.id) }}" class="form-inline" onsubmit="return confirm('¿Eliminar usuario?');">
+                        <button class="btn-link" type="submit">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="muted">No hay usuarios.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
-  </div>
-
-  <div class="card-actions" style="margin-top: 16px;">
-    <a class="btn" href="{{ url_for('main.home') }}">Inicio</a>
-    <a class="btn" href="{{ url_for('pedidos.nuevo') }}">Nuevo pedido</a>
-  </div>
+</div>
 {% endblock %}

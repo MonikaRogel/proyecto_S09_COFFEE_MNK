@@ -1,40 +1,54 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="page-head">
+
+<div class="page-head-row">
+  <div>
     <h1>Usuarios</h1>
-    <a class="btn primary" href="{{ url_for('usuarios.nuevo') }}">+ Nuevo Usuario</a>
+    <p class="muted">Gestión de cuentas de acceso al sistema.</p>
+  </div>
+  <a class="btn primary" href="{{ url_for('usuarios.nuevo') }}">+ Nuevo usuario</a>
 </div>
 
-<div class="table-wrap">
+<div class="card plain">
+  <div class="table-wrap">
     <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Email</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for u in usuarios %}
-            <tr>
-                <td>{{ u.id }}</td>
-                <td>{{ u.nombre }}</td>
-                <td>{{ u.mail }}</td>
-                <td>
-                    <a class="btn small" href="{{ url_for('usuarios.editar', id=u.id) }}">Editar</a>
-                    <form method="post" action="{{ url_for('usuarios.eliminar', id=u.id) }}" style="display:inline;" onsubmit="return confirm('¿Eliminar usuario?');">
-                        <button class="btn small" type="submit">Eliminar</button>
-                    </form>
-                </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="4" class="muted">No hay usuarios.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th class="th-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in usuarios %}
+        <tr class="table-row-hover">
+          <td class="td-id">{{ u.id }}</td>
+          <td class="td-name">
+            <span class="user-avatar">{{ u.nombre[0]|upper }}</span>
+            {{ u.nombre }}
+          </td>
+          <td class="muted">{{ u.mail }}</td>
+          <td class="td-actions">
+            <div class="table-actions">
+              <a class="btn small outline" href="{{ url_for('usuarios.editar', id=u.id) }}">Editar</a>
+              <form method="post"
+                    action="{{ url_for('usuarios.eliminar', id=u.id) }}"
+                    class="form-inline-block"
+                    onsubmit="return confirm('¿Eliminar usuario {{ u.nombre }}?');">
+                <button class="btn-danger" type="submit">Eliminar</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="4" class="td-empty">No hay usuarios registrados.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
+  </div>
 </div>
+
 {% endblock %}

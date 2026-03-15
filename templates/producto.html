@@ -2,7 +2,7 @@
 
 {% block content %}
   <div class="product">
-    <div class="product-media" style="background-image:url('{{ producto.img }}');"></div>
+    <div class="product-media" data-bg="{{ producto.img }}"></div>
 
     <div class="product-info">
       <h1>{{ producto.nombre }}</h1>
@@ -29,4 +29,13 @@
       </div>
     </div>
   </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const media = document.querySelector('.product-media');
+    if (media && media.dataset.bg) {
+        media.style.backgroundImage = 'url("' + media.dataset.bg + '")';
+    }
+});
+</script>
 {% endblock %}
