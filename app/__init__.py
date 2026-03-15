@@ -36,6 +36,9 @@ def create_app():
     from .routes.pedidos import bp as pedidos_bp
     from .routes.datos import bp as datos_bp
 
+    from .routes.usuarios import bp as usuarios_bp
+    app.register_blueprint(usuarios_bp)
+
     app.register_blueprint(main_bp)
     app.register_blueprint(productos_bp, url_prefix='/productos')
     app.register_blueprint(clientes_bp, url_prefix='/clientes')

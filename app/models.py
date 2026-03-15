@@ -40,3 +40,21 @@ class PedidoItem(db.Model):
 
     pedido = db.relationship('Pedido', backref='items')
     producto = db.relationship('Producto')
+
+    class Usuario(db.Model):
+    __tablename__ = 'usuarios'
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    mail = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+
+    # ... (tus modelos existentes: Producto, Cliente, Pedido, PedidoItem)
+
+    class Usuario(db.Model):
+    __tablename__ = 'usuarios'
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    mail = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)  # En producción, usar hash
+
+    # ... (si había más código)

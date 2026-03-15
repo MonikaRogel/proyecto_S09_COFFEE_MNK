@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-head">
+    <h1>{% if usuario %}Editar{% else %}Nuevo{% endif %} Usuario</h1>
+</div>
+
+<form method="POST" class="form">
+    <div class="form-grid">
+        <label class="field">
+            <span class="label">Nombre *</span>
+            <input type="text" name="nombre" value="{{ usuario.nombre if usuario else '' }}" required>
+        </label>
+        <label class="field">
+            <span class="label">Email *</span>
+            <input type="email" name="mail" value="{{ usuario.mail if usuario else '' }}" required>
+        </label>
+        <label class="field">
+            <span class="label">Contraseña {% if usuario %}(dejar en blanco para no cambiar){% endif %} *</span>
+            <input type="password" name="password" {% if not usuario %}required{% endif %}>
+        </label>
+    </div>
+    <div class="form-actions">
+        <a href="{{ url_for('usuarios.index') }}" class="btn">Cancelar</a>
+        <button type="submit" class="btn primary">Guardar</button>
+    </div>
+</form>
+{% endblock %}

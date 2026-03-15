@@ -26,7 +26,21 @@
         <a href="{{ url_for('datos.index') }}" class="nav-link">Datos</a>   <!-- Semana 12: persistencia con archivos -->
         <a href="{{ url_for('pedidos.nuevo') }}" class="nav-link nav-cta">Nuevo pedido</a>
         <a href="{{ url_for('main.about') }}" class="nav-link">Acerca de</a>
+        <a href="{{ url_for('productos.admin') }}" class="nav-link">Admin Productos</a>
+        <a href="{{ url_for('usuarios.index') }}" class="nav-link">Usuarios</a>
       </nav>
+      <nav class="nav">
+        <a href="{{ url_for('main.home') }}" class="nav-link">Inicio</a>
+        <a href="{{ url_for('productos.index') }}" class="nav-link">Menú</a>
+        <a href="{{ url_for('productos.inventario') }}" class="nav-link">Inventario</a>
+        <a href="{{ url_for('productos.admin') }}" class="nav-link">Admin Productos</a>  <!-- NUEVO -->
+        <a href="{{ url_for('pedidos.index') }}" class="nav-link">Pedidos</a>
+        <a href="{{ url_for('clientes.index') }}" class="nav-link">Clientes</a>
+        <a href="{{ url_for('usuarios.index') }}" class="nav-link">Usuarios</a>           <!-- NUEVO -->
+        <a href="{{ url_for('datos.index') }}" class="nav-link">Datos</a>
+        <a href="{{ url_for('pedidos.nuevo') }}" class="nav-link nav-cta">Nuevo pedido</a>
+        <a href="{{ url_for('main.about') }}" class="nav-link">Acerca de</a>
+    </nav>
     </div>
   </header>
 
