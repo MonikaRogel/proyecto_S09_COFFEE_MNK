@@ -250,4 +250,4 @@ def cambiar_estado(pedido_id: int):
         db.session.rollback()
         flash(f"Error al cambiar estado: {str(e)}", "error")
 
-    return redirect(url_for("pedidos.detalle", pedido_id=pedido_id))S
+    return redirect(url_for("pedidos.detalle", pedido_id=pedido_id))
