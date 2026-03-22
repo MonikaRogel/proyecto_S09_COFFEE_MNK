@@ -1023,6 +1023,34 @@ input:focus, select:focus, textarea:focus {
 
 .form-inline { display: inline; }
 
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* =============================================
+   UTILIDADES ADICIONALES (para plantillas)
+============================================= */
+.card-plain-mb {
+    margin-bottom: 16px;
+}
+
+.form-grid-auto {
+    grid-template-columns: 1fr auto;
+}
+
+.card-actions-mt {
+    margin-top: 16px;
+}
+
+.btn-full-width {
+    width: 100%;
+}
+
+.form-actions-end {
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
 /* =============================================
    IMÁGENES DE PRODUCTO
 ============================================= */
@@ -1108,25 +1136,15 @@ input:focus, select:focus, textarea:focus {
 /* =============================================
    TABLA — CLASES DE COLUMNA
 ============================================= */
-
-/* Alineación derecha en encabezado y celda de acciones */
 .th-right          { text-align: right; }
 .td-actions        { text-align: right; }
-
-/* ID pequeño y atenuado */
 .td-id             { font-size: 12px; color: var(--muted); }
-
-/* Celda nombre con avatar alineado */
 .td-name           { vertical-align: middle; }
-
-/* Mensaje de tabla vacía centrado */
 .td-empty          { text-align: center; padding: 32px 0; color: var(--muted); }
-
-/* Form inline dentro de tabla sin romper el flujo */
 .form-inline-block { display: inline-block; }
 
 /* =============================================
-   DROPDOWN ADMIN
+   DROPDOWN ADMIN (repetido, pero no afecta)
 ============================================= */
 .nav-dropdown {
   position: relative;
@@ -1233,7 +1251,6 @@ input:focus, select:focus, textarea:focus {
 /* =============================================
    AUTH PAGES — login / registro
 ============================================= */
-
 .auth-wrap {
   display: flex;
   justify-content: center;

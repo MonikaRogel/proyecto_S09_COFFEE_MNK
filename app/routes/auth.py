@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
-from ..models import Usuario
+from ..models import Usuario, Cliente   # Importamos Cliente
 from ..extensions import db
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -42,9 +42,14 @@ def register():
         if Usuario.query.filter_by(mail=email).first():
             flash('El correo ya está registrado', 'error')
             return redirect(url_for('auth.register'))
+        # Crear usuario
         user = Usuario(nombre=nombre, mail=email, rol='cliente')
         user.set_password(password)
         db.session.add(user)
+        db.session.flush()  # Para obtener id si fuera necesario
+        # Crear cliente asociado
+        cliente = Cliente(nombre=nombre, email=email)
+        db.session.add(cliente)
         db.session.commit()
         flash('Registro exitoso. Ahora puedes iniciar sesión', 'success')
         return redirect(url_for('auth.login'))

@@ -23,21 +23,21 @@
     <div class="table-wrap">
       <table class="table">
         <thead>
-          <tr>
+           <tr>
             <th>Producto</th>
             <th>Precio</th>
             <th>Cantidad</th>
             <th>Subtotal</th>
-          </tr>
+           </tr>
         </thead>
         <tbody>
           {% for it in items %}
-            <tr>
-              <td>{{ it.producto_nombre }}</td>
-              <td>${{ "%.2f"|format(it.precio_unitario) }}</td>
-              <td>{{ it.cantidad }}</td>
-              <td>${{ "%.2f"|format(it.subtotal) }}</td>
-            </tr>
+             <tr>
+               <td>{{ it.producto_nombre }}</td>
+               <td>${{ "%.2f"|format(it.precio_unitario) }}</td>
+               <td>{{ it.cantidad }}</td>
+               <td>${{ "%.2f"|format(it.subtotal) }}</td>
+             </tr>
           {% endfor %}
         </tbody>
       </table>
@@ -60,7 +60,7 @@
     <h3>Cambiar estado</h3>
 
     <form id="form-estado" method="post" action="{{ url_for('pedidos.cambiar_estado', pedido_id=pedido.id) }}" class="inline-form">
-      <select id="select-estado" name="estado" class="select-mini">
+      <select id="select-estado" name="estado" class="select-mini" title="Seleccionar estado">
         {% for e in estados %}
           <option value="{{ e }}" {% if pedido.estado == e %}selected{% endif %}>{{ e }}</option>
         {% endfor %}
@@ -74,7 +74,7 @@
       </button>
     </form>
 
-    <div class="card-actions" style="margin-top: 16px;">
+    <div class="card-actions mt-16">
       <a class="btn" href="{{ url_for('productos.index') }}">Seguir comprando</a>
       <a class="btn primary" href="{{ url_for('pedidos.nuevo') }}">Nuevo pedido</a>
       <a class="btn" href="{{ url_for('pedidos.index') }}">Ver pedidos</a>

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-head">
+    <h1>Nuevo pedido</h1>
+    <p class="muted">Cliente: <strong>{{ cliente.nombre }} ({{ cliente.email }})</strong></p>
+</div>
+
+<form method="POST" class="form">
+    <div class="form-grid">
+        <label class="field">
+            <span class="label">Producto</span>
+            <select name="producto" required>
+                <option value="" disabled {% if not pre_producto %}selected{% endif %}>Selecciona un producto</option>
+                {% for p in productos %}
+                    {% if p.stock > 0 %}
+                        <option value="{{ p.slug }}" {% if pre_producto == p.slug %}selected{% endif %}>
+                            {{ p.nombre }} - ${{ "%.2f"|format(p.precio) }} (Stock: {{ p.stock }})
+                        </option>
+                    {% else %}
+                        <option value="{{ p.slug }}" disabled>{{ p.nombre }} - Agotado</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </label>
+
+        <label class="field">
+            <span class="label">Cantidad</span>
+            <input name="cantidad" type="number" min="1" value="1" required>
+        </label>
+
+        <label class="field field-full">
+            <span class="label">Notas (opcional)</span>
+            <textarea name="notas" rows="3" placeholder="Ej: sin azúcar, extra espuma..."></textarea>
+        </label>
+    </div>
+
+    <div class="form-actions">
+        <a href="{{ url_for('productos.index') }}" class="btn">Cancelar</a>
+        <button class="btn primary" type="submit">Registrar pedido</button>
+    </div>
+</form>
+{% endblock %}
