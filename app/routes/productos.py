@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask_login import login_required
 from ..models import Producto, PedidoItem
 from ..extensions import db
 
 bp = Blueprint("productos", __name__)
-
 
 def _fetch_menu_dict():
     productos = Producto.query.order_by(Producto.id.desc()).all()
@@ -19,12 +19,11 @@ def _fetch_menu_dict():
         }
     return menu
 
-
+# Rutas públicas (sin login)
 @bp.route("/")
 def index():
     menu = _fetch_menu_dict()
     return render_template("menu.html", titulo="Menú", menu=menu)
-
 
 @bp.route("/inventario")
 def inventario():
@@ -38,13 +37,6 @@ def inventario():
         total_skus=total_skus,
         total_stock=total_stock,
     )
-
-
-@bp.route("/admin")
-def admin():
-    productos = Producto.query.order_by(Producto.nombre).all()
-    return render_template("productos_admin.html", titulo="Administrar Productos", productos=productos)
-
 
 @bp.route("/<slug>")
 def detalle(slug: str):
@@ -68,8 +60,15 @@ def detalle(slug: str):
         producto=prod_dict,
     )
 
+# Rutas protegidas (requieren autenticación)
+@bp.route("/admin")
+@login_required
+def admin():
+    productos = Producto.query.order_by(Producto.nombre).all()
+    return render_template("productos_admin.html", titulo="Administrar Productos", productos=productos)
 
 @bp.route("/nuevo", methods=["GET", "POST"])
+@login_required
 def nuevo():
     if request.method == "POST":
         slug = request.form.get("slug", "").strip().lower()
@@ -102,8 +101,8 @@ def nuevo():
 
     return render_template("producto_form.html", titulo="Nuevo Producto", producto=None)
 
-
 @bp.route("/<int:id>/editar", methods=["GET", "POST"])
+@login_required
 def editar(id):
     producto = Producto.query.get_or_404(id)
     if request.method == "POST":
@@ -120,8 +119,8 @@ def editar(id):
 
     return render_template("producto_form.html", titulo="Editar Producto", producto=producto)
 
-
 @bp.route("/<int:id>/eliminar", methods=["POST"])
+@login_required
 def eliminar(id):
     producto = Producto.query.get_or_404(id)
     if PedidoItem.query.filter_by(producto_id=id).first():

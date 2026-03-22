@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask_login import login_required
 from ..models import Pedido, Cliente, Producto, PedidoItem
 from ..extensions import db
 from datetime import datetime
@@ -7,8 +8,8 @@ bp = Blueprint("pedidos", __name__)
 
 ESTADOS_PERMITIDOS = ["En preparación", "Listo", "Entregado", "Cancelado"]
 
-
 @bp.route("/")
+@login_required
 def index():
     estado = (request.args.get("estado") or "").strip()
     if estado:
@@ -27,8 +28,8 @@ def index():
         })
     return render_template("pedidos_list.html", titulo="Pedidos", pedidos=pedidos_list, estado=estado)
 
-
 @bp.route("/nuevo", methods=["GET", "POST"])
+@login_required
 def nuevo():
     pre_producto = (request.args.get("producto") or "").lower().strip()
 
@@ -127,8 +128,8 @@ def nuevo():
         flash(f"Error al crear el pedido: {str(e)}", "error")
         return redirect(url_for("pedidos.nuevo", producto=producto_slug))
 
-
 @bp.route("/<int:pedido_id>")
+@login_required
 def detalle(pedido_id: int):
     pedido = Pedido.query.get(pedido_id)
     if not pedido:
@@ -161,8 +162,8 @@ def detalle(pedido_id: int):
         estados=ESTADOS_PERMITIDOS,
     )
 
-
 @bp.route("/<int:pedido_id>/estado", methods=["POST"])
+@login_required
 def cambiar_estado(pedido_id: int):
     nuevo_estado = (request.form.get("estado") or "").strip()
     if nuevo_estado not in ESTADOS_PERMITIDOS:

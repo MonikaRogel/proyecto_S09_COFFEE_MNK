@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo">☕</div>
+      <h1>Bienvenido</h1>
+      <p class="muted">Inicia sesión en COFFEE_MNK</p>
+    </div>
+    <form method="POST" action="/auth/login" class="form">
+      <div class="form-grid">
+        <div class="field">
+          <label class="label" for="email">Correo electrónico</label>
+          <input type="email" id="email" name="email" placeholder="tucorreo@ejemplo.com" required>
+        </div>
+        <div class="field">
+          <label class="label" for="password">Contraseña</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" required>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn primary" style="width:100%">Iniciar sesión</button>
+      </div>
+    </form>
+    <p class="auth-footer">
+      ¿No tienes cuenta?
+      <a class="link" href="/auth/register">Regístrate aquí</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

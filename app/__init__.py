@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_login import LoginManager
 from .config import Config
 from .extensions import db
 import os
@@ -18,13 +19,21 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
+    # Configurar Flask-Login
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    login_manager.login_view = 'auth.login'   # ruta a la que redirigir si no está autenticado
+    login_manager.login_message = 'Por favor, inicia sesión para acceder a esta página.'
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        from .models import Usuario
+        return Usuario.query.get(int(user_id))
+
     with app.app_context():
-        # Importar modelos y crear tablas
         from . import models
         db.create_all()
         print("Tablas creadas (o ya existían).")
-
-        # Ejecutar seed si la base está vacía
         from .seed import seed_if_empty
         seed_if_empty()
 
@@ -35,6 +44,7 @@ def create_app():
     from .routes.pedidos import bp as pedidos_bp
     from .routes.datos import bp as datos_bp
     from .routes.usuarios import bp as usuarios_bp
+    from .routes.auth import bp as auth_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(productos_bp, url_prefix='/productos')
@@ -42,5 +52,6 @@ def create_app():
     app.register_blueprint(pedidos_bp, url_prefix='/pedidos')
     app.register_blueprint(datos_bp)
     app.register_blueprint(usuarios_bp)
+    app.register_blueprint(auth_bp)
 
     return app

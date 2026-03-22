@@ -13,64 +13,61 @@
   <header class="topbar">
     <div class="container topbar-row">
 
-      <!-- MARCA -->
       <a class="brand" href="{{ url_for('main.home') }}">
         <span class="brand-name">COFFEE<span>_MNK</span></span>
         <span class="brand-tag">Cafetería · Ventas · Pedidos</span>
       </a>
 
-      <!-- NAV -->
       <nav class="nav">
+        <a href="{{ url_for('main.home') }}" class="nav-link">Inicio</a>
+        <a href="{{ url_for('productos.index') }}" class="nav-link">Menú</a>
+        <a href="{{ url_for('productos.inventario') }}" class="nav-link">Inventario</a>
 
-        <!-- Links de cliente -->
-        <a href="{{ url_for('main.home') }}"        class="nav-link">Inicio</a>
-        <a href="{{ url_for('productos.index') }}"  class="nav-link">Menú</a>
-        <a href="{{ url_for('main.about') }}"       class="nav-link">Acerca de</a>
-
-        <!-- Separador visual -->
-        <span class="nav-sep"></span>
-
-        <!-- Dropdown de administración -->
-        <div class="nav-dropdown">
-          <button class="nav-link nav-dropdown-toggle" type="button">
-            ⚙ Admin
-            <svg class="nav-chevron" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </button>
-          <div class="nav-dropdown-menu">
-            <div class="nav-dropdown-label">Gestión</div>
-            <a href="{{ url_for('productos.admin') }}"     class="nav-dropdown-item">
-              <span class="nav-di-icon">📦</span> Productos
-            </a>
-            <a href="{{ url_for('productos.inventario') }}" class="nav-dropdown-item">
-              <span class="nav-di-icon">🗃</span> Inventario
-            </a>
-            <a href="{{ url_for('pedidos.index') }}"       class="nav-dropdown-item">
-              <span class="nav-di-icon">🧾</span> Pedidos
-            </a>
-            <div class="nav-dropdown-divider"></div>
-            <div class="nav-dropdown-label">Personas</div>
-            <a href="{{ url_for('clientes.index') }}"      class="nav-dropdown-item">
-              <span class="nav-di-icon">👥</span> Clientes
-            </a>
-            <a href="{{ url_for('usuarios.index') }}"      class="nav-dropdown-item">
-              <span class="nav-di-icon">🔐</span> Usuarios
-            </a>
-            <div class="nav-dropdown-divider"></div>
-            <div class="nav-dropdown-label">Sistema</div>
-            <a href="{{ url_for('datos.index') }}"         class="nav-dropdown-item">
-              <span class="nav-di-icon">📊</span> Datos
-            </a>
+        {% if current_user.is_authenticated %}
+          <div class="nav-dropdown">
+            <button class="nav-link nav-dropdown-toggle" type="button">
+              ⚙ Admin
+              <svg class="nav-chevron" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div class="nav-dropdown-menu">
+              <div class="nav-dropdown-label">Gestión</div>
+              <a href="{{ url_for('productos.admin') }}" class="nav-dropdown-item">
+                <span class="nav-di-icon">📦</span> Productos
+              </a>
+              <a href="{{ url_for('productos.inventario') }}" class="nav-dropdown-item">
+                <span class="nav-di-icon">🗃</span> Inventario
+              </a>
+              <a href="{{ url_for('pedidos.index') }}" class="nav-dropdown-item">
+                <span class="nav-di-icon">🧾</span> Pedidos
+              </a>
+              <div class="nav-dropdown-divider"></div>
+              <div class="nav-dropdown-label">Personas</div>
+              <a href="{{ url_for('clientes.index') }}" class="nav-dropdown-item">
+                <span class="nav-di-icon">👥</span> Clientes
+              </a>
+              <a href="{{ url_for('usuarios.index') }}" class="nav-dropdown-item">
+                <span class="nav-di-icon">🔐</span> Usuarios
+              </a>
+              <div class="nav-dropdown-divider"></div>
+              <div class="nav-dropdown-label">Sistema</div>
+              <a href="{{ url_for('datos.index') }}" class="nav-dropdown-item">
+                <span class="nav-di-icon">📊</span> Datos
+              </a>
+            </div>
           </div>
-        </div>
 
-        <!-- CTA principal -->
-        <a href="{{ url_for('pedidos.nuevo') }}" class="nav-link nav-cta">
-          + Nuevo pedido
-        </a>
+          <a href="{{ url_for('pedidos.nuevo') }}" class="nav-link nav-cta">Nuevo pedido</a>
+          <a href="{{ url_for('auth.logout') }}" class="nav-link">Cerrar sesión</a>
+        {% else %}
+          <a href="{{ url_for('auth.login') }}" class="nav-link">Iniciar sesión</a>
+          <a href="{{ url_for('auth.register') }}" class="nav-link">Registrarse</a>
+        {% endif %}
 
+        <a href="{{ url_for('main.about') }}" class="nav-link">Acerca de</a>
       </nav>
+
     </div>
   </header>
 
@@ -95,7 +92,6 @@
     </div>
   </footer>
 
-  <!-- Dropdown toggle script -->
   <script>
   (function () {
     var toggles = document.querySelectorAll('.nav-dropdown-toggle');
@@ -104,19 +100,16 @@
         e.stopPropagation();
         var parent = btn.closest('.nav-dropdown');
         var isOpen = parent.classList.contains('open');
-        // cerrar todos
         document.querySelectorAll('.nav-dropdown.open')
           .forEach(function (d) { d.classList.remove('open'); });
         if (!isOpen) parent.classList.add('open');
       });
     });
-    // clic fuera cierra
     document.addEventListener('click', function () {
       document.querySelectorAll('.nav-dropdown.open')
         .forEach(function (d) { d.classList.remove('open'); });
     });
   })();
   </script>
-
 </body>
 </html>
