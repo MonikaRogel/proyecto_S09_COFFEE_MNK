@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from ..extensions import db, admin_required
-from ..models import Pedido, Cliente, Producto, PedidoItem
+from ..models import Pedido, Cliente, Producto, PedidoItem, Usuario   # importación única
 from datetime import datetime
 import re
 
@@ -92,6 +92,7 @@ def nuevo():
                 flash("El email ya está registrado para otro cliente.", "error")
                 return redirect(url_for("pedidos.nuevo", producto=pre_producto))
             try:
+                # 1. Crear cliente
                 cliente = Cliente(
                     nombre=cliente_nombre,
                     cedula=cliente_cedula,
@@ -101,6 +102,25 @@ def nuevo():
                 db.session.add(cliente)
                 db.session.flush()
                 cliente_id = cliente.id
+
+                # 2. Si se proporcionó email, crear usuario asociado (si no existe)
+                if cliente_email:
+                    usuario_existente = Usuario.query.filter_by(mail=cliente_email).first()
+                    if not usuario_existente:
+                        nuevo_usuario = Usuario(
+                            nombre=cliente_nombre,
+                            mail=cliente_email,
+                            rol='cliente'
+                        )
+                        nuevo_usuario.set_password('cliente123')
+                        db.session.add(nuevo_usuario)
+                        flash(f"Usuario creado automáticamente para el cliente. Contraseña: cliente123", "info")
+                    else:
+                        flash(f"Ya existe un usuario con este email. Se usará el existente.", "info")
+
+                # 3. Confirmar todo
+                db.session.commit()
+
             except Exception as e:
                 db.session.rollback()
                 flash(f"Error al crear cliente: {str(e)}", "error")
