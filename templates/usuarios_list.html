@@ -13,12 +13,13 @@
   <div class="table-wrap">
     <table class="table">
       <thead>
-        <tr>
+         <tr>
           <th>ID</th>
           <th>Nombre</th>
           <th>Email</th>
+          <th>Teléfono</th>
           <th class="th-right">Acciones</th>
-        </tr>
+         </tr>
       </thead>
       <tbody>
         {% for u in usuarios %}
@@ -29,6 +30,7 @@
             {{ u.nombre }}
           </td>
           <td class="muted">{{ u.mail }}</td>
+          <td class="muted">{{ u.telefono if u.telefono else '-' }}</td>
           <td class="td-actions">
             <div class="table-actions">
               <a class="btn small outline" href="{{ url_for('usuarios.editar', id=u.id) }}">Editar</a>
@@ -43,7 +45,7 @@
         </tr>
         {% else %}
         <tr>
-          <td colspan="4" class="td-empty">No hay usuarios registrados.</td>
+          <td colspan="5" class="td-empty">No hay usuarios registrados.</td>
         </tr>
         {% endfor %}
       </tbody>
