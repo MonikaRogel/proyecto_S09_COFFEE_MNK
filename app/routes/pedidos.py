@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from ..extensions import db, admin_required
-from ..models import Pedido, Cliente, Producto, PedidoItem, Usuario   # importación única
+from ..models import Pedido, Cliente, Producto, PedidoItem, Usuario
 from datetime import datetime
 import re
 
@@ -110,13 +110,14 @@ def nuevo():
                         nuevo_usuario = Usuario(
                             nombre=cliente_nombre,
                             mail=cliente_email,
+                            telefono=cliente_telefono,   # guardamos el teléfono
                             rol='cliente'
                         )
                         nuevo_usuario.set_password('cliente123')
                         db.session.add(nuevo_usuario)
-                        flash(f"Usuario creado automáticamente para el cliente. Contraseña: cliente123", "info")
+                        flash("Usuario creado automáticamente con los mismos datos del cliente.", "info")
                     else:
-                        flash(f"Ya existe un usuario con este email. Se usará el existente.", "info")
+                        flash("Ya existe un usuario con este email. Se usará el existente.", "info")
 
                 # 3. Confirmar todo
                 db.session.commit()
@@ -208,8 +209,9 @@ def detalle(pedido_id: int):
         flash("Pedido no encontrado.", "error")
         return redirect(url_for("pedidos.index"))
 
-    # Solo admin o el propio cliente puede ver el pedido
-    if not current_user.es_admin and pedido.cliente_id != current_user.id:
+    # Verificar permisos: admin o el cliente asociado al pedido (por email)
+    cliente = pedido.cliente
+    if not current_user.es_admin and (not cliente or cliente.email != current_user.mail):
         flash("No tienes permiso para ver este pedido.", "error")
         return redirect(url_for("main.home"))
 
@@ -229,7 +231,7 @@ def detalle(pedido_id: int):
         "estado": pedido.estado,
         "notas": pedido.notas,
         "total": pedido.total,
-        "cliente_nombre": pedido.cliente.nombre if pedido.cliente else "Desconocido",
+        "cliente_nombre": cliente.nombre if cliente else "Desconocido",
     }
     return render_template(
         "pedido_detalle.html",

@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_required
+from flask_login import login_required, current_user
 from ..extensions import db, admin_required
 from ..models import Usuario
 
@@ -17,6 +17,7 @@ def nuevo():
     if request.method == "POST":
         nombre = request.form.get("nombre", "").strip()
         mail = request.form.get("mail", "").strip()
+        telefono = request.form.get("telefono", "").strip() or None
         password = request.form.get("password", "").strip()
         rol = request.form.get("rol", "cliente").strip()
 
@@ -28,7 +29,7 @@ def nuevo():
             flash("Ya existe un usuario con ese email", "error")
             return redirect(url_for("usuarios.nuevo"))
 
-        usuario = Usuario(nombre=nombre, mail=mail, rol=rol)
+        usuario = Usuario(nombre=nombre, mail=mail, telefono=telefono, rol=rol)
         usuario.set_password(password)
         db.session.add(usuario)
         db.session.commit()
@@ -44,6 +45,7 @@ def editar(id):
     if request.method == "POST":
         usuario.nombre = request.form.get("nombre", "").strip()
         usuario.mail = request.form.get("mail", "").strip()
+        usuario.telefono = request.form.get("telefono", "").strip() or None
         usuario.rol = request.form.get("rol", "cliente").strip()
         nueva_pass = request.form.get("password", "").strip()
         if nueva_pass:
@@ -58,7 +60,6 @@ def editar(id):
 @admin_required
 def eliminar(id):
     usuario = Usuario.query.get_or_404(id)
-    # Evitar eliminar el propio usuario actual (opcional)
     if usuario.id == current_user.id:
         flash("No puedes eliminar tu propio usuario.", "error")
         return redirect(url_for("usuarios.index"))

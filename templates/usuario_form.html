@@ -16,6 +16,10 @@
             <input type="email" name="mail" value="{{ usuario.mail if usuario else '' }}" required>
         </label>
         <label class="field">
+            <span class="label">Teléfono</span>
+            <input type="text" name="telefono" value="{{ usuario.telefono if usuario else '' }}" placeholder="Ej: 0991234567">
+        </label>
+        <label class="field">
             <span class="label">Contraseña {% if usuario %}(dejar en blanco para no cambiar){% endif %} *</span>
             <input type="password" name="password" {% if not usuario %}required{% endif %}>
         </label>
