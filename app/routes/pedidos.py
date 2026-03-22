@@ -1,15 +1,15 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_required
+from flask_login import login_required, current_user
+from ..extensions import db, admin_required
 from ..models import Pedido, Cliente, Producto, PedidoItem
-from ..extensions import db
 from datetime import datetime
 
 bp = Blueprint("pedidos", __name__)
-
 ESTADOS_PERMITIDOS = ["En preparación", "Listo", "Entregado", "Cancelado"]
 
+# Listado de pedidos: solo admin
 @bp.route("/")
-@login_required
+@admin_required
 def index():
     estado = (request.args.get("estado") or "").strip()
     if estado:
@@ -28,6 +28,7 @@ def index():
         })
     return render_template("pedidos_list.html", titulo="Pedidos", pedidos=pedidos_list, estado=estado)
 
+# Crear pedido: cualquier usuario autenticado
 @bp.route("/nuevo", methods=["GET", "POST"])
 @login_required
 def nuevo():
@@ -128,6 +129,7 @@ def nuevo():
         flash(f"Error al crear el pedido: {str(e)}", "error")
         return redirect(url_for("pedidos.nuevo", producto=producto_slug))
 
+# Detalle de pedido: cualquier autenticado, pero solo si es su pedido o admin
 @bp.route("/<int:pedido_id>")
 @login_required
 def detalle(pedido_id: int):
@@ -135,6 +137,11 @@ def detalle(pedido_id: int):
     if not pedido:
         flash("Pedido no encontrado.", "error")
         return redirect(url_for("pedidos.index"))
+
+    # Si no es admin y no es el cliente que hizo el pedido, no puede verlo
+    if not current_user.es_admin and pedido.cliente_id != current_user.id:
+        flash("No tienes permiso para ver este pedido.", "error")
+        return redirect(url_for("main.home"))
 
     items = []
     for it in pedido.items:
@@ -162,8 +169,9 @@ def detalle(pedido_id: int):
         estados=ESTADOS_PERMITIDOS,
     )
 
+# Cambiar estado: solo admin
 @bp.route("/<int:pedido_id>/estado", methods=["POST"])
-@login_required
+@admin_required
 def cambiar_estado(pedido_id: int):
     nuevo_estado = (request.form.get("estado") or "").strip()
     if nuevo_estado not in ESTADOS_PERMITIDOS:

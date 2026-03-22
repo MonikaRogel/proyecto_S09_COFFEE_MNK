@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required
+from ..extensions import db, admin_required
 from ..models import Cliente
-from ..extensions import db
 from sqlalchemy import or_
 
 bp = Blueprint("clientes", __name__)
@@ -23,7 +23,7 @@ def _cedula_ya_existe(cedula: str, exclude_id: int | None = None) -> bool:
     return query.first() is not None
 
 @bp.route("/")
-@login_required
+@admin_required
 def index():
     q = (request.args.get("q") or "").strip()
     if q:
@@ -52,7 +52,7 @@ def index():
     return render_template("clientes_list.html", titulo="Clientes", clientes=clientes_list, q=q)
 
 @bp.route("/nuevo", methods=["GET", "POST"])
-@login_required
+@admin_required
 def nuevo():
     if request.method == "GET":
         return render_template("cliente_form.html", titulo="Nuevo cliente", cliente=None)
@@ -86,7 +86,7 @@ def nuevo():
         return redirect(url_for("clientes.nuevo"))
 
 @bp.route("/<int:cliente_id>/editar", methods=["GET", "POST"])
-@login_required
+@admin_required
 def editar(cliente_id: int):
     cliente = Cliente.query.get(cliente_id)
     if not cliente:
@@ -127,7 +127,7 @@ def editar(cliente_id: int):
         return redirect(url_for("clientes.editar", cliente_id=cliente_id))
 
 @bp.route("/<int:cliente_id>/eliminar", methods=["POST"])
-@login_required
+@admin_required
 def eliminar(cliente_id: int):
     cliente = Cliente.query.get(cliente_id)
     if not cliente:

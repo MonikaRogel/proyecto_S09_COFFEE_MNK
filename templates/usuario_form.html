@@ -19,6 +19,13 @@
             <span class="label">Contraseña {% if usuario %}(dejar en blanco para no cambiar){% endif %} *</span>
             <input type="password" name="password" {% if not usuario %}required{% endif %}>
         </label>
+        <label class="field">
+            <span class="label">Rol</span>
+            <select name="rol">
+                <option value="cliente" {% if usuario and usuario.rol == 'cliente' %}selected{% endif %}>Cliente</option>
+                <option value="admin" {% if usuario and usuario.rol == 'admin' %}selected{% endif %}>Administrador</option>
+            </select>
+        </label>
     </div>
     <div class="form-actions">
         <a href="{{ url_for('usuarios.index') }}" class="btn">Cancelar</a>

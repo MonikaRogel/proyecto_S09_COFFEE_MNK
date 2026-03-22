@@ -21,9 +21,11 @@
       <nav class="nav">
         <a href="{{ url_for('main.home') }}" class="nav-link">Inicio</a>
         <a href="{{ url_for('productos.index') }}" class="nav-link">Menú</a>
-        <a href="{{ url_for('productos.inventario') }}" class="nav-link">Inventario</a>
 
         {% if current_user.is_authenticated %}
+          <a href="{{ url_for('pedidos.nuevo') }}" class="nav-link nav-cta">Nuevo pedido</a>
+
+          {% if current_user.es_admin %}
           <div class="nav-dropdown">
             <button class="nav-link nav-dropdown-toggle" type="button">
               ⚙ Admin
@@ -57,8 +59,8 @@
               </a>
             </div>
           </div>
+          {% endif %}
 
-          <a href="{{ url_for('pedidos.nuevo') }}" class="nav-link nav-cta">Nuevo pedido</a>
           <a href="{{ url_for('auth.logout') }}" class="nav-link">Cerrar sesión</a>
         {% else %}
           <a href="{{ url_for('auth.login') }}" class="nav-link">Iniciar sesión</a>

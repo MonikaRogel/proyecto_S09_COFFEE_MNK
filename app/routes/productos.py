@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required
+from ..extensions import db, admin_required   # importamos el decorador
 from ..models import Producto, PedidoItem
-from ..extensions import db
 
 bp = Blueprint("productos", __name__)
 
@@ -19,24 +19,11 @@ def _fetch_menu_dict():
         }
     return menu
 
-# Rutas públicas (sin login)
+# Rutas públicas (cualquier visitante puede ver)
 @bp.route("/")
 def index():
     menu = _fetch_menu_dict()
     return render_template("menu.html", titulo="Menú", menu=menu)
-
-@bp.route("/inventario")
-def inventario():
-    menu = _fetch_menu_dict()
-    total_skus = len(menu)
-    total_stock = sum(p["stock"] for p in menu.values())
-    return render_template(
-        "inventario.html",
-        titulo="Inventario",
-        menu=menu,
-        total_skus=total_skus,
-        total_stock=total_stock,
-    )
 
 @bp.route("/<slug>")
 def detalle(slug: str):
@@ -60,15 +47,29 @@ def detalle(slug: str):
         producto=prod_dict,
     )
 
-# Rutas protegidas (requieren autenticación)
+# Rutas de administración (solo para administradores)
+@bp.route("/inventario")
+@admin_required
+def inventario():
+    menu = _fetch_menu_dict()
+    total_skus = len(menu)
+    total_stock = sum(p["stock"] for p in menu.values())
+    return render_template(
+        "inventario.html",
+        titulo="Inventario",
+        menu=menu,
+        total_skus=total_skus,
+        total_stock=total_stock,
+    )
+
 @bp.route("/admin")
-@login_required
+@admin_required
 def admin():
     productos = Producto.query.order_by(Producto.nombre).all()
     return render_template("productos_admin.html", titulo="Administrar Productos", productos=productos)
 
 @bp.route("/nuevo", methods=["GET", "POST"])
-@login_required
+@admin_required
 def nuevo():
     if request.method == "POST":
         slug = request.form.get("slug", "").strip().lower()
@@ -102,7 +103,7 @@ def nuevo():
     return render_template("producto_form.html", titulo="Nuevo Producto", producto=None)
 
 @bp.route("/<int:id>/editar", methods=["GET", "POST"])
-@login_required
+@admin_required
 def editar(id):
     producto = Producto.query.get_or_404(id)
     if request.method == "POST":
@@ -120,7 +121,7 @@ def editar(id):
     return render_template("producto_form.html", titulo="Editar Producto", producto=producto)
 
 @bp.route("/<int:id>/eliminar", methods=["POST"])
-@login_required
+@admin_required
 def eliminar(id):
     producto = Producto.query.get_or_404(id)
     if PedidoItem.query.filter_by(producto_id=id).first():
