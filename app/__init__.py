@@ -45,6 +45,7 @@ def create_app():
     from .routes.datos import bp as datos_bp
     from .routes.usuarios import bp as usuarios_bp
     from .routes.auth import bp as auth_bp
+    from .routes.reportes import bp as reportes_bp  # NUEVO
 
     app.register_blueprint(main_bp)
     app.register_blueprint(productos_bp, url_prefix='/productos')
@@ -53,5 +54,6 @@ def create_app():
     app.register_blueprint(datos_bp)
     app.register_blueprint(usuarios_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(reportes_bp)  # NUEVO
 
     return app

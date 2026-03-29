@@ -1,6 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required
 from ..extensions import db, admin_required
+from ..forms.cliente_form import ClienteForm
+from ..services.cliente_service import get_all, get_by_id, create, update, delete
 from ..models import Cliente
 from sqlalchemy import or_
 
@@ -37,7 +39,7 @@ def index():
             )
         ).order_by(Cliente.nombre).all()
     else:
-        clientes = Cliente.query.order_by(Cliente.nombre).all()
+        clientes = get_all()   # usa el servicio
 
     clientes_list = []
     for c in clientes:
@@ -49,101 +51,67 @@ def index():
             "telefono": c.telefono,
             "pedidos_count": len(c.pedidos)
         })
-    return render_template("clientes_list.html", titulo="Clientes", clientes=clientes_list, q=q)
+    return render_template("clientes/list.html", titulo="Clientes", clientes=clientes_list, q=q)
 
 @bp.route("/nuevo", methods=["GET", "POST"])
 @admin_required
 def nuevo():
-    if request.method == "GET":
-        return render_template("cliente_form.html", titulo="Nuevo cliente", cliente=None)
-
-    nombre = (request.form.get("nombre") or "").strip()
-    cedula = (request.form.get("cedula") or "").strip() or None
-    email = (request.form.get("email") or "").strip() or None
-    telefono = (request.form.get("telefono") or "").strip() or None
-
-    if not nombre:
-        flash("El nombre es obligatorio.", "error")
-        return redirect(url_for("clientes.nuevo"))
-
-    if cedula and _cedula_ya_existe(cedula):
-        flash("La cédula ya está registrada para otro cliente.", "error")
-        return redirect(url_for("clientes.nuevo"))
-
-    if email and _email_ya_existe(email):
-        flash("Ese email ya está registrado para otro cliente.", "error")
-        return redirect(url_for("clientes.nuevo"))
-
-    try:
-        cliente = Cliente(nombre=nombre, cedula=cedula, email=email, telefono=telefono)
-        db.session.add(cliente)
-        db.session.commit()
-        flash("Cliente creado.", "success")
-        return redirect(url_for("clientes.index"))
-    except Exception as e:
-        db.session.rollback()
-        flash(f"Error al crear cliente: {str(e)}", "error")
-        return redirect(url_for("clientes.nuevo"))
+    form = ClienteForm()
+    if form.validate_on_submit():
+        data = {
+            'nombre': form.nombre.data,
+            'cedula': form.cedula.data or None,
+            'email': form.email.data or None,
+            'telefono': form.telefono.data or None
+        }
+        # Validaciones de unicidad
+        if data['cedula'] and _cedula_ya_existe(data['cedula']):
+            flash("La cédula ya está registrada para otro cliente.", "error")
+            return redirect(url_for("clientes.nuevo"))
+        if data['email'] and _email_ya_existe(data['email']):
+            flash("Ese email ya está registrado para otro cliente.", "error")
+            return redirect(url_for("clientes.nuevo"))
+        try:
+            create(data)
+            flash("Cliente creado.", "success")
+            return redirect(url_for("clientes.index"))
+        except Exception as e:
+            flash(f"Error al crear cliente: {str(e)}", "error")
+    return render_template("clientes/form.html", form=form, titulo="Nuevo Cliente")
 
 @bp.route("/<int:cliente_id>/editar", methods=["GET", "POST"])
 @admin_required
 def editar(cliente_id: int):
-    cliente = Cliente.query.get(cliente_id)
-    if not cliente:
-        flash("Cliente no encontrado.", "error")
-        return redirect(url_for("clientes.index"))
-
-    if request.method == "GET":
-        return render_template("cliente_form.html", titulo="Editar cliente", cliente=cliente)
-
-    nombre = (request.form.get("nombre") or "").strip()
-    cedula = (request.form.get("cedula") or "").strip() or None
-    email = (request.form.get("email") or "").strip() or None
-    telefono = (request.form.get("telefono") or "").strip() or None
-
-    if not nombre:
-        flash("El nombre es obligatorio.", "error")
-        return redirect(url_for("clientes.editar", cliente_id=cliente_id))
-
-    if cedula and _cedula_ya_existe(cedula, exclude_id=cliente_id):
-        flash("La cédula ya está registrada para otro cliente.", "error")
-        return redirect(url_for("clientes.editar", cliente_id=cliente_id))
-
-    if email and _email_ya_existe(email, exclude_id=cliente_id):
-        flash("Ese email ya está registrado para otro cliente.", "error")
-        return redirect(url_for("clientes.editar", cliente_id=cliente_id))
-
-    try:
-        cliente.nombre = nombre
-        cliente.cedula = cedula
-        cliente.email = email
-        cliente.telefono = telefono
-        db.session.commit()
-        flash("Cliente actualizado.", "success")
-        return redirect(url_for("clientes.index"))
-    except Exception as e:
-        db.session.rollback()
-        flash(f"Error al actualizar cliente: {str(e)}", "error")
-        return redirect(url_for("clientes.editar", cliente_id=cliente_id))
+    cliente = get_by_id(cliente_id)
+    form = ClienteForm(obj=cliente)
+    if form.validate_on_submit():
+        data = {
+            'nombre': form.nombre.data,
+            'cedula': form.cedula.data or None,
+            'email': form.email.data or None,
+            'telefono': form.telefono.data or None
+        }
+        # Validaciones de unicidad excluyendo el actual
+        if data['cedula'] and _cedula_ya_existe(data['cedula'], exclude_id=cliente_id):
+            flash("La cédula ya está registrada para otro cliente.", "error")
+            return redirect(url_for("clientes.editar", cliente_id=cliente_id))
+        if data['email'] and _email_ya_existe(data['email'], exclude_id=cliente_id):
+            flash("Ese email ya está registrado para otro cliente.", "error")
+            return redirect(url_for("clientes.editar", cliente_id=cliente_id))
+        try:
+            update(cliente_id, data)
+            flash("Cliente actualizado.", "success")
+            return redirect(url_for("clientes.index"))
+        except Exception as e:
+            flash(f"Error al actualizar cliente: {str(e)}", "error")
+    return render_template("clientes/form.html", form=form, titulo="Editar Cliente")
 
 @bp.route("/<int:cliente_id>/eliminar", methods=["POST"])
 @admin_required
 def eliminar(cliente_id: int):
-    cliente = Cliente.query.get(cliente_id)
-    if not cliente:
-        flash("Cliente no encontrado.", "error")
-        return redirect(url_for("clientes.index"))
-
-    if len(cliente.pedidos) > 0:
-        flash("No se pudo eliminar: el cliente tiene pedidos asociados.", "error")
-        return redirect(url_for("clientes.index"))
-
     try:
-        db.session.delete(cliente)
-        db.session.commit()
+        delete(cliente_id)
         flash("Cliente eliminado.", "success")
-    except Exception as e:
-        db.session.rollback()
-        flash(f"Error al eliminar cliente: {str(e)}", "error")
-
-    return redirect(url_for("clientes.index"))
+    except ValueError as e:
+        flash(str(e), "error")
+    return redirect(url_for("clientes.index"))   # <- línea faltante añadida

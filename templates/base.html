@@ -55,7 +55,17 @@
               <div class="nav-dropdown-divider"></div>
               <div class="nav-dropdown-label">Sistema</div>
               <a href="{{ url_for('datos.index') }}" class="nav-dropdown-item">
-                <span class="nav-di-icon">📊</span> Datos
+                <span class="nav-di-icon">📊</span> Datos        
+              <div class="nav-dropdown-divider"></div>
+              <div class="nav-dropdown-label">Reportes</div>
+              <a href="{{ url_for('reportes.productos_pdf') }}" class="nav-dropdown-item">
+                  <span class="nav-di-icon">📄</span> Productos PDF
+              </a>
+              <a href="{{ url_for('reportes.clientes_pdf') }}" class="nav-dropdown-item">
+                  <span class="nav-di-icon">📄</span> Clientes PDF
+              </a>
+              <a href="{{ url_for('reportes.usuarios_pdf') }}" class="nav-dropdown-item">
+                  <span class="nav-di-icon">📄</span> Usuarios PDF
               </a>
             </div>
           </div>

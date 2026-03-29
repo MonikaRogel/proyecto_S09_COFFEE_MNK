@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-head-row">
+  <div>
+    <h1>Clientes</h1>
+    <p class="muted">Gestión de clientes registrados.</p>
+  </div>
+  <a class="btn primary" href="{{ url_for('clientes.nuevo') }}">+ Nuevo cliente</a>
+</div>
+
+<div class="card plain">
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Cédula</th>
+          <th>Email</th>
+          <th>Teléfono</th>
+          <th>Pedidos</th>
+          <th class="th-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in clientes %}
+        <tr class="table-row-hover">
+          <td class="td-id">{{ c.id }}</td>
+          <td>
+            <span class="user-avatar">{{ c.nombre[0]|upper }}</span>
+            {{ c.nombre }}
+          </td>
+          <td class="muted">{{ c.cedula or '-' }}</td>
+          <td class="muted">{{ c.email or '-' }}</td>
+          <td class="muted">{{ c.telefono or '-' }}</td>
+          <td>
+            {% if c.pedidos_count > 0 %}
+              <span class="badge ok">{{ c.pedidos_count }}</span>
+            {% else %}
+              <span class="muted">0</span>
+            {% endif %}
+          </td>
+          <td class="td-actions">
+            <div class="table-actions">
+              <a class="btn small outline"
+                 href="{{ url_for('clientes.editar', cliente_id=c.id) }}">Editar</a>
+
+              {% if c.pedidos_count == 0 %}
+                <form method="post"
+                      action="{{ url_for('clientes.eliminar', cliente_id=c.id) }}"
+                      class="form-inline-block"
+                      onsubmit="return confirm('¿Eliminar cliente {{ c.nombre }}?');">
+                  <button class="btn-danger" type="submit">Eliminar</button>
+                </form>
+              {% else %}
+                <span class="badge-info badge">Con pedidos</span>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="7" class="td-empty">No hay clientes registrados.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

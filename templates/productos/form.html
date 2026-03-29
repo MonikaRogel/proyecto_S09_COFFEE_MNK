@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-head">
+  <h1>{{ titulo }}</h1>
+</div>
+
+<form method="POST" class="form">
+  {{ form.hidden_tag() }}
+  <div class="form-grid">
+
+    <div class="field">
+      {{ form.slug.label(class="label") }}
+      {{ form.slug(class="input-field") }}
+      {% for error in form.slug.errors %}
+        <small class="error">{{ error }}</small>
+      {% endfor %}
+    </div>
+
+    <div class="field">
+      {{ form.nombre.label(class="label") }}
+      {{ form.nombre(class="input-field") }}
+      {% for error in form.nombre.errors %}
+        <small class="error">{{ error }}</small>
+      {% endfor %}
+    </div>
+
+    <div class="field">
+      {{ form.precio.label(class="label") }}
+      {{ form.precio(class="input-field") }}
+      {% for error in form.precio.errors %}
+        <small class="error">{{ error }}</small>
+      {% endfor %}
+    </div>
+
+    <div class="field">
+      {{ form.stock.label(class="label") }}
+      {{ form.stock(class="input-field") }}
+      {% for error in form.stock.errors %}
+        <small class="error">{{ error }}</small>
+      {% endfor %}
+    </div>
+
+    <div class="field">
+      {{ form.img.label(class="label") }}
+      {{ form.img(class="input-field") }}
+      {% for error in form.img.errors %}
+        <small class="error">{{ error }}</small>
+      {% endfor %}
+    </div>
+
+    <div class="field field-full">
+      {{ form.descripcion.label(class="label") }}
+      {{ form.descripcion(class="input-field", rows=3) }}
+      {% for error in form.descripcion.errors %}
+        <small class="error">{{ error }}</small>
+      {% endfor %}
+    </div>
+
+  </div>
+
+  <div class="form-actions">
+    <a href="{{ url_for('productos.admin') }}" class="btn">Cancelar</a>
+    {{ form.submit(class="btn primary") }}
+  </div>
+</form>
+
+{% endblock %}

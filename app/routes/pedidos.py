@@ -33,7 +33,7 @@ def index():
             "total": p.total,
             "cliente_nombre": p.cliente.nombre if p.cliente else "Desconocido",
         })
-    return render_template("pedidos_list.html", titulo="Pedidos", pedidos=pedidos_list, estado=estado)
+    return render_template("pedidos/list.html", titulo="Pedidos", pedidos=pedidos_list, estado=estado)
 
 # ---------- Crear pedido ----------
 @bp.route("/nuevo", methods=["GET", "POST"])
@@ -48,7 +48,7 @@ def nuevo():
             # Admin: puede elegir cliente existente o crear nuevo
             clientes = Cliente.query.order_by(Cliente.nombre).all()
             return render_template(
-                "pedido_nuevo.html",
+                "pedidos/nuevo.html",
                 titulo="Nuevo pedido",
                 productos=productos,
                 clientes=clientes,
@@ -64,7 +64,7 @@ def nuevo():
                 db.session.commit()
                 flash("Se ha creado tu perfil de cliente automáticamente.", "info")
             return render_template(
-                "pedido_nuevo_cliente.html",
+                "pedidos/nuevo_cliente.html",
                 titulo="Nuevo pedido",
                 productos=productos,
                 cliente=cliente,
@@ -234,7 +234,7 @@ def detalle(pedido_id: int):
         "cliente_nombre": cliente.nombre if cliente else "Desconocido",
     }
     return render_template(
-        "pedido_detalle.html",
+        "pedidos/detalle.html",
         titulo=f"Pedido #{pedido_id}",
         pedido=pedido_dict,
         items=items,

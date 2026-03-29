@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-head">
+  <h1>{{ titulo }}</h1>
+</div>
+
+<form method="POST" class="form">
+  {{ form.hidden_tag() }}
+  <div class="form-grid">
+
+    <div class="field">
+      {{ form.nombre.label(class="label") }}
+      {{ form.nombre(class="input-field") }}
+      {% for error in form.nombre.errors %}
+        <small class="error">{{ error }}</small>
+      {% endfor %}
+    </div>
+
+    <div class="field">
+      {{ form.cedula.label(class="label") }}
+      {{ form.cedula(class="input-field") }}
+      {% for error in form.cedula.errors %}
+        <small class="error">{{ error }}</small>
+      {% endfor %}
+    </div>
+
+    <div class="field">
+      {{ form.email.label(class="label") }}
+      {{ form.email(class="input-field") }}
+      {% for error in form.email.errors %}
+        <small class="error">{{ error }}</small>
+      {% endfor %}
+    </div>
+
+    <div class="field">
+      {{ form.telefono.label(class="label") }}
+      {{ form.telefono(class="input-field") }}
+      {% for error in form.telefono.errors %}
+        <small class="error">{{ error }}</small>
+      {% endfor %}
+    </div>
+
+  </div>
+
+  <div class="form-actions">
+    <a href="{{ url_for('clientes.index') }}" class="btn">Cancelar</a>
+    {{ form.submit(class="btn primary") }}
+  </div>
+</form>
+
+{% endblock %}

@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required
-from ..extensions import db, admin_required   # importamos el decorador
+from ..extensions import db, admin_required
+from ..forms.producto_form import ProductoForm
+from ..services.producto_service import get_all, get_by_id, create, update, delete
 from ..models import Producto, PedidoItem
 
 bp = Blueprint("productos", __name__)
@@ -19,11 +21,11 @@ def _fetch_menu_dict():
         }
     return menu
 
-# Rutas públicas (cualquier visitante puede ver)
+# ---------- Rutas públicas ----------
 @bp.route("/")
 def index():
     menu = _fetch_menu_dict()
-    return render_template("menu.html", titulo="Menú", menu=menu)
+    return render_template("productos/menu.html", titulo="Menú", menu=menu)
 
 @bp.route("/<slug>")
 def detalle(slug: str):
@@ -41,13 +43,13 @@ def detalle(slug: str):
         "desc": producto.descripcion or "",
     }
     return render_template(
-        "producto.html",
+        "productos/detalle.html",
         titulo=f"Producto - {producto.nombre}",
         slug=slug,
         producto=prod_dict,
     )
 
-# Rutas de administración (solo para administradores)
+# ---------- Rutas administrativas ----------
 @bp.route("/inventario")
 @admin_required
 def inventario():
@@ -55,7 +57,7 @@ def inventario():
     total_skus = len(menu)
     total_stock = sum(p["stock"] for p in menu.values())
     return render_template(
-        "inventario.html",
+        "productos/inventario.html",
         titulo="Inventario",
         menu=menu,
         total_skus=total_skus,
@@ -65,70 +67,52 @@ def inventario():
 @bp.route("/admin")
 @admin_required
 def admin():
-    productos = Producto.query.order_by(Producto.nombre).all()
-    return render_template("productos_admin.html", titulo="Administrar Productos", productos=productos)
+    productos = get_all()
+    return render_template("productos/admin.html", titulo="Administrar Productos", productos=productos)
 
 @bp.route("/nuevo", methods=["GET", "POST"])
 @admin_required
 def nuevo():
-    if request.method == "POST":
-        slug = request.form.get("slug", "").strip().lower()
-        nombre = request.form.get("nombre", "").strip()
-        precio = float(request.form.get("precio", 0))
-        stock = int(request.form.get("stock", 0))
-        img = request.form.get("img", "").strip()
-        descripcion = request.form.get("descripcion", "").strip()
-
-        if not slug or not nombre or precio <= 0:
-            flash("Datos inválidos", "error")
-            return redirect(url_for("productos.nuevo"))
-
-        if Producto.query.filter_by(slug=slug).first():
-            flash("Ya existe un producto con ese slug", "error")
-            return redirect(url_for("productos.nuevo"))
-
-        producto = Producto(
-            slug=slug,
-            nombre=nombre,
-            precio=precio,
-            stock=stock,
-            img=img,
-            descripcion=descripcion,
-        )
-        db.session.add(producto)
-        db.session.commit()
+    form = ProductoForm()
+    if form.validate_on_submit():
+        data = {
+            'slug': form.slug.data,
+            'nombre': form.nombre.data,
+            'precio': form.precio.data,
+            'stock': form.stock.data,
+            'img': form.img.data,
+            'descripcion': form.descripcion.data
+        }
+        create(data)
         flash("Producto creado", "success")
         return redirect(url_for("productos.admin"))
-
-    return render_template("producto_form.html", titulo="Nuevo Producto", producto=None)
+    return render_template("productos/form.html", form=form, titulo="Nuevo Producto")
 
 @bp.route("/<int:id>/editar", methods=["GET", "POST"])
 @admin_required
 def editar(id):
-    producto = Producto.query.get_or_404(id)
-    if request.method == "POST":
-        producto.slug = request.form.get("slug", "").strip().lower()
-        producto.nombre = request.form.get("nombre", "").strip()
-        producto.precio = float(request.form.get("precio", 0))
-        producto.stock = int(request.form.get("stock", 0))
-        producto.img = request.form.get("img", "").strip()
-        producto.descripcion = request.form.get("descripcion", "").strip()
-
-        db.session.commit()
+    producto = get_by_id(id)
+    form = ProductoForm(obj=producto)
+    if form.validate_on_submit():
+        data = {
+            'slug': form.slug.data,
+            'nombre': form.nombre.data,
+            'precio': form.precio.data,
+            'stock': form.stock.data,
+            'img': form.img.data,
+            'descripcion': form.descripcion.data
+        }
+        update(id, data)
         flash("Producto actualizado", "success")
         return redirect(url_for("productos.admin"))
-
-    return render_template("producto_form.html", titulo="Editar Producto", producto=producto)
+    return render_template("productos/form.html", form=form, titulo="Editar Producto")
 
 @bp.route("/<int:id>/eliminar", methods=["POST"])
 @admin_required
 def eliminar(id):
-    producto = Producto.query.get_or_404(id)
-    if PedidoItem.query.filter_by(producto_id=id).first():
-        flash("No se puede eliminar porque tiene pedidos asociados", "error")
-        return redirect(url_for("productos.admin"))
-
-    db.session.delete(producto)
-    db.session.commit()
-    flash("Producto eliminado", "success")
+    try:
+        delete(id)
+        flash("Producto eliminado", "success")
+    except ValueError as e:
+        flash(str(e), "error")
     return redirect(url_for("productos.admin"))

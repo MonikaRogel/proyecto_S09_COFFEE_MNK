@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-head">
+  <h1>{{ titulo }}</h1>
+</div>
+
+<form method="POST" class="form">
+  {{ form.hidden_tag() }}
+  <div class="form-grid">
+
+    <div class="field">
+      {{ form.nombre.label(class="label") }}
+      {{ form.nombre(class="input-field") }}
+      {% for error in form.nombre.errors %}
+        <small class="error">{{ error }}</small>
+      {% endfor %}
+    </div>
+
+    <div class="field">
+      {{ form.mail.label(class="label") }}
+      {{ form.mail(class="input-field") }}
+      {% for error in form.mail.errors %}
+        <small class="error">{{ error }}</small>
+      {% endfor %}
+    </div>
+
+    <div class="field">
+      {{ form.password.label(class="label") }}
+      {{ form.password(class="input-field") }}
+      <small class="muted">Dejar en blanco para no cambiar la contraseña</small>
+      {% for error in form.password.errors %}
+        <small class="error">{{ error }}</small>
+      {% endfor %}
+    </div>
+
+    <div class="field">
+      {{ form.rol.label(class="label") }}
+      {{ form.rol(class="input-field") }}
+      {% for error in form.rol.errors %}
+        <small class="error">{{ error }}</small>
+      {% endfor %}
+    </div>
+
+  </div>
+
+  <div class="form-actions">
+    <a href="{{ url_for('usuarios.index') }}" class="btn">Cancelar</a>
+    {{ form.submit(class="btn primary") }}
+  </div>
+</form>
+
+{% endblock %}
