@@ -5,8 +5,9 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from io import BytesIO
-from app.services.producto_service import get_all as get_productos
-from app.services.cliente_service import get_all as get_clientes
+from services.producto_service import get_all as get_productos
+from services.cliente_service import get_all as get_clientes
+from services.usuario_service import get_all as get_usuarios
 
 bp = Blueprint('reportes', __name__, url_prefix='/reportes')
 
@@ -88,7 +89,6 @@ def usuarios_pdf():
     elements.append(title)
     elements.append(Spacer(1, 12))
 
-    from app.services.usuario_service import get_all as get_usuarios
     usuarios = get_usuarios()
     data = [['ID', 'Nombre', 'Email', 'Teléfono', 'Rol']]
     for u in usuarios:

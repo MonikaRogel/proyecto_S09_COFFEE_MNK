@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required
-from ..extensions import db, admin_required
-from ..forms.producto_form import ProductoForm
-from ..services.producto_service import get_all, get_by_id, create, update, delete
-from ..models import Producto, PedidoItem
+from extensions import db, admin_required
+from forms.producto_form import ProductoForm
+from services.producto_service import get_all, get_by_id, create, update, delete
+from models import Producto, PedidoItem
 
 bp = Blueprint("productos", __name__)
 
@@ -21,7 +21,6 @@ def _fetch_menu_dict():
         }
     return menu
 
-# ---------- Rutas públicas ----------
 @bp.route("/")
 def index():
     menu = _fetch_menu_dict()
@@ -49,7 +48,6 @@ def detalle(slug: str):
         producto=prod_dict,
     )
 
-# ---------- Rutas administrativas ----------
 @bp.route("/inventario")
 @admin_required
 def inventario():

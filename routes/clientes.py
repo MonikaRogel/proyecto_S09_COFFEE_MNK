@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required
-from ..extensions import db, admin_required
-from ..forms.cliente_form import ClienteForm
-from ..services.cliente_service import get_all, get_by_id, create, update, delete
-from ..models import Cliente
+from extensions import db, admin_required
+from forms.cliente_form import ClienteForm
+from services.cliente_service import get_all, get_by_id, create, update, delete
+from models import Cliente
 from sqlalchemy import or_
 
 bp = Blueprint("clientes", __name__)
@@ -39,7 +39,7 @@ def index():
             )
         ).order_by(Cliente.nombre).all()
     else:
-        clientes = get_all()   # usa el servicio
+        clientes = get_all()
 
     clientes_list = []
     for c in clientes:
@@ -64,7 +64,6 @@ def nuevo():
             'email': form.email.data or None,
             'telefono': form.telefono.data or None
         }
-        # Validaciones de unicidad
         if data['cedula'] and _cedula_ya_existe(data['cedula']):
             flash("La cédula ya está registrada para otro cliente.", "error")
             return redirect(url_for("clientes.nuevo"))
@@ -91,7 +90,6 @@ def editar(cliente_id: int):
             'email': form.email.data or None,
             'telefono': form.telefono.data or None
         }
-        # Validaciones de unicidad excluyendo el actual
         if data['cedula'] and _cedula_ya_existe(data['cedula'], exclude_id=cliente_id):
             flash("La cédula ya está registrada para otro cliente.", "error")
             return redirect(url_for("clientes.editar", cliente_id=cliente_id))
@@ -114,4 +112,4 @@ def eliminar(cliente_id: int):
         flash("Cliente eliminado.", "success")
     except ValueError as e:
         flash(str(e), "error")
-    return redirect(url_for("clientes.index"))   # <- línea faltante añadida
+    return redirect(url_for("clientes.index"))

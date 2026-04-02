@@ -1,5 +1,5 @@
-from .extensions import db
-from .models import Producto, Cliente
+from extensions import db
+from models import Producto, Cliente
 
 PRODUCTOS_INICIALES = [
     {
@@ -52,8 +52,6 @@ CLIENTES_INICIALES = [
 ]
 
 def seed_if_empty():
-    """Inserta datos iniciales solo si las tablas están vacías."""
-    # Productos
     if Producto.query.count() == 0:
         for data in PRODUCTOS_INICIALES:
             producto = Producto(**data)
@@ -61,7 +59,6 @@ def seed_if_empty():
         db.session.commit()
         print("Productos iniciales insertados.")
 
-    # Clientes
     if Cliente.query.count() == 0:
         for data in CLIENTES_INICIALES:
             cliente = Cliente(**data)

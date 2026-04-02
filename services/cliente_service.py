@@ -1,5 +1,5 @@
-from app.models import Cliente
-from app.extensions import db
+from models import Cliente
+from extensions import db
 
 def get_all():
     return Cliente.query.order_by(Cliente.nombre).all()

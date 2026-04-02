@@ -1,0 +1,5 @@
+DB_HOST = 'centerbeam.proxy.rlwy.net'
+DB_PORT = '10485'
+DB_USER = 'root'
+DB_PASSWORD = 'szMZkSJLZRTVbGaVOiyMyzfXRESrROuB'
+DB_NAME = 'railway'

@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
-from ..extensions import db, admin_required
-from ..forms.usuario_form import UsuarioForm
-from ..services.usuario_service import get_all, get_by_id, create, update, delete
-from ..models import Usuario
+from extensions import db, admin_required
+from forms.usuario_form import UsuarioForm
+from services.usuario_service import get_all, get_by_id, create, update, delete
+from models import Usuario
 
 bp = Blueprint("usuarios", __name__, url_prefix="/usuarios")
 
@@ -18,7 +18,6 @@ def index():
 def nuevo():
     form = UsuarioForm()
     if form.validate_on_submit():
-        # Verificar si ya existe un usuario con ese email
         if Usuario.query.filter_by(mail=form.mail.data).first():
             flash("Ya existe un usuario con ese email", "error")
             return redirect(url_for("usuarios.nuevo"))
@@ -28,7 +27,6 @@ def nuevo():
             'telefono': form.telefono.data or None,
             'rol': form.rol.data
         }
-        # Asignar contraseña
         if form.password.data:
             from werkzeug.security import generate_password_hash
             data['password'] = generate_password_hash(form.password.data)
@@ -55,7 +53,6 @@ def editar(id):
             'telefono': form.telefono.data or None,
             'rol': form.rol.data
         }
-        # Si se proporcionó nueva contraseña, actualizar
         if form.password.data:
             from werkzeug.security import generate_password_hash
             data['password'] = generate_password_hash(form.password.data)

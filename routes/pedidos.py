@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from ..extensions import db, admin_required
-from ..models import Pedido, Cliente, Producto, PedidoItem, Usuario
+from extensions import db, admin_required
+from models import Pedido, Cliente, Producto, PedidoItem, Usuario
 from datetime import datetime
 import re
+
 
 bp = Blueprint("pedidos", __name__)
 ESTADOS_PERMITIDOS = ["En preparación", "Listo", "Entregado", "Cancelado"]
